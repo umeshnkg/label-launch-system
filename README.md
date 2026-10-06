@@ -17,20 +17,20 @@ npm run preview    # serve dist/ on http://localhost:4180
 ## Pages
 
 - `index.html`: the landing page.
-- `releases/rock-it-out/index.html`: the case-study page for Divi Roxx Kids "Rock It Out".
+- `releases/<slug>/index.html`: one case-study page per featured release. Eight are generated from `src/releases.js` by `scripts/gen-releases.mjs` (runs on `npm run gen`, `dev` and `prebuild`). `releases/rock-it-out/index.html` is handwritten.
 
-Both are registered in `vite.config.js`.
+`vite.config.js` picks up every `releases/*/index.html` on disk.
 
 ## Content
 
-- `src/data.js` holds the lists: releases (YouTube id, artist, title, views, year), logo wall, testimonials, FAQ. Edit here, not in the HTML.
-- Views were read with yt-dlp on 2026-10-04. Refresh before a push.
+- `src/releases.js` holds the featured case studies (YouTube id, client, dates, turnaround, deliverables, promo Shorts). `src/data.js` holds the rest: smaller lyric videos, logo wall, services, review screenshots, quotes, FAQ. Edit here, not in the HTML.
+- Views were read with yt-dlp on 2026-10-06. Refresh before a push.
 - `public/thumbs/<id>.webp` are the YouTube thumbnails (640w). `public/kit/` holds the client kit images and the two Canvas loops. `public/docs/` has the Launch Playbook and Release Cheat Sheet PDFs.
 - `public/hero.mp4` is a 28-second muted excerpt of the studio demo reel, cropped to remove the yellow progress bar. Replace with the Label Launch Kit trailer when it is rendered (keep it under ~5 MB, 1280 wide, no audio).
 
 ## Logos
 
-The marquee renders text wordmarks until the logo files exist. To switch one to an image, drop a monochrome SVG or PNG into `public/logos/` and add `img: '/logos/<file>'` to that entry in `LOGOS` in `src/data.js`.
+`public/logos/` holds white-on-transparent PNGs (and one SVG) that CSS greys down in the marquee. Entries without `img` render as text. To add one, drop a white silhouette into `public/logos/` and set `img` and `h` (display height in px) on that entry in `LOGOS` in `src/data.js`. `scripts/logo-from-luminance.mjs` turns a dark-on-light logo into a trimmed white PNG.
 
 ## Lead form
 
@@ -39,14 +39,18 @@ The marquee renders text wordmarks until the logo files exist. To switch one to 
 - `CLICKUP_API_TOKEN`, `CLICKUP_LIST_ID`
 - `RESEND_API_KEY` (optional), `LEAD_NOTIFY_EMAIL` (default contact@lyricvideo.tv)
 
-The sender is `noreply@ughdstudios.com` until labellaunchsystem.com is verified in Resend. Leads with budget "Under $2,500" are tagged `route-to-mlv` and the thank-you message points to makelyricvideo.com/pro.
+The sender is `noreply@ughdstudios.com` until labellaunchsystem.com is verified in Resend. Leads with budget "Under $1,000" are tagged `route-to-mlv` and the thank-you message points to makelyricvideo.com/pro.
 
 ## Deploy
 
-1. Push to GitHub, connect the repo in Cloudflare Pages (build command `npm run build`, output `dist`).
-2. Add the environment variables above.
-3. Point labellaunchsystem.com at Cloudflare (Porkbun nameservers or CNAME), add the custom domain in Pages.
-4. Replace `public/og.jpg` with a 1200x630 image if the generated one is swapped out.
+Same setup as ughdstudios.com: GitHub `main` -> Cloudflare Pages, auto-deploy on push.
+
+- Repo: https://github.com/umeshnkg/label-launch-system (pushed 2026-10-06).
+- Cloudflare Pages: Workers & Pages -> Create -> Pages -> Import an existing Git repository -> `umeshnkg/label-launch-system`. Framework preset Vite, build command `npm run build`, output directory `dist`, production branch `main`. `.node-version` pins Node 22.
+- Environment variables (Settings -> Variables and Secrets, production): the four listed above. Copy the ClickUp and Resend values from the ughd-studios Pages project; the ClickUp list is the same "fresh leads" list.
+- Domain: labellaunchsystem.com is registered at Porkbun. Add the site to Cloudflare, switch the Porkbun nameservers to the two Cloudflare ones, then Pages -> Custom domains -> add `labellaunchsystem.com` and `www.labellaunchsystem.com`.
+- After the first deploy, submit `https://labellaunchsystem.com/sitemap.xml` in Search Console.
+- Screenshots of the built site: `node scripts/shoot.mjs <outDir>` (headless Edge, needs `vite preview` port 4180 free).
 
 ## Copy rules
 

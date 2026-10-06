@@ -40,7 +40,7 @@ export async function onRequestPost({ request, env }) {
     '**Message:**',
     field(message, 4000),
     '',
-    lowBudget ? '_Under $2,500: the site pointed them to makelyricvideo.com/pro._' : '',
+    lowBudget ? '_Under $1,000: the site pointed them to makelyricvideo.com/pro._' : '',
   ].join('\n');
 
   const tasks = [];
