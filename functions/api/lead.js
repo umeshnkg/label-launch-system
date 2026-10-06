@@ -86,7 +86,12 @@ export async function onRequestPost({ request, env }) {
 
   const results = await Promise.allSettled(tasks);
   for (const r of results) {
-    if (r.status === 'rejected') console.error('Lead delivery error:', r.reason);
+    if (r.status === 'rejected') {
+      console.error('Lead delivery error:', r.reason);
+    } else if (!r.value.ok) {
+      // ClickUp or Resend answered with an error status; surface it in the Functions log.
+      console.error('Lead delivery failed:', r.value.url, r.value.status, await r.value.text().catch(() => ''));
+    }
   }
 
   return json({ ok: true });
