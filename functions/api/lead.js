@@ -73,8 +73,8 @@ export async function onRequestPost({ request, env }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          // Keep the verified ughdstudios.com sender until labellaunchsystem.com is verified in Resend.
-          from: 'Label Launch System <noreply@ughdstudios.com>',
+          // labellaunchsystem.com is the verified Resend sending domain (DKIM + SPF CNAMEs live in Cloudflare DNS).
+          from: 'Label Launch System <noreply@labellaunchsystem.com>',
           to: [env.LEAD_NOTIFY_EMAIL || 'contact@lyricvideo.tv'],
           reply_to: cleanEmail,
           subject: `LLS lead: ${cleanName} | ${field(budget)} | ${field(releaseWindow)}`,

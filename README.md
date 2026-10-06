@@ -39,7 +39,7 @@ npm run preview    # serve dist/ on http://localhost:4180
 - `CLICKUP_API_TOKEN`, `CLICKUP_LIST_ID`
 - `RESEND_API_KEY` (optional), `LEAD_NOTIFY_EMAIL` (default contact@lyricvideo.tv)
 
-The sender is `noreply@ughdstudios.com` until labellaunchsystem.com is verified in Resend. Leads with budget "Under $1,000" are tagged `route-to-mlv` and the thank-you message points to makelyricvideo.com/pro.
+The sender is `noreply@labellaunchsystem.com`; the domain is verified in Resend (account umeshnkg) with the DKIM TXT, the `rsend`/`send` CNAMEs and a DMARC TXT in Cloudflare DNS. Delivery errors show in Pages -> deployment -> Functions -> Real-time logs. Leads with budget "Under $1,000" are tagged `route-to-mlv` and the thank-you message points to makelyricvideo.com/pro.
 
 ## Deploy
 
