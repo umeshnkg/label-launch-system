@@ -5,3 +5,4 @@ CLICKUP_API_TOKEN=pk_your_token_here
 CLICKUP_LIST_ID=your_fresh_leads_list_id
 RESEND_API_KEY=re_your_key_here
 LEAD_NOTIFY_EMAIL=contact@lyricvideo.tv
+LEAD_PHONE=+1 (606) 227 4600

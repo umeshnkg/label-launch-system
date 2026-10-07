@@ -59,14 +59,17 @@
         <a class="btn btn--ghost" href="#kit">See a full kit</a>
       </div>
       <div class="proof">
-        <div class="proof__card">
-          <span class="proof__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-3 5 3-1.5-8.5"/></svg></span>
-          <div><span>Since 2016</span><b>10+ years, 800+ visual launches</b></div>
+        <div class="proof__card proof__card--labels">
+          <span class="proof__eyebrow">10+ years with labels incl.</span>
+          <div class="proof__logos">
+            <img src="/logos/sony-music.png" alt="Sony Music" style="--h:38" />
+            <img src="/logos/four-music.png" alt="Four Music" style="--h:28" />
+            <img src="/logos/jinx-music.png" alt="Jinx Music" style="--h:18" />
+          </div>
         </div>
-        <div class="proof__card">
-          <span class="proof__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/></svg></span>
-          <div><span>Has worked with</span><b>Sony Music, Warner Music, Four Music</b></div>
-        </div>
+        <figure class="proof__card proof__card--quote" data-hero-quotes aria-label="What clients say">
+          <div class="hq"></div>
+        </figure>
       </div>
       <div class="hero__media">
         <div class="frame">
@@ -102,9 +105,8 @@
           </div>
         </div>
         <div class="spot__media">
-          <a class="yt" href="/releases/erinner-mich/" aria-label="Erinner mich case study">
+          <a class="yt" href="/releases/erinner-mich/" data-ytcard="fbTbUaMrmBM" aria-label="Erinner mich case study">
             <img src="/kit/erinner-mich-thumb.webp" alt="HBz x 2 Engel and Charlie, Erinner mich, official lyric video" width="960" height="540" />
-            <span class="yt__views">19.5M views</span>
             <span class="yt__case">Case study →</span>
           </a>
           <a class="phone" href="/releases/erinner-mich/" aria-label="Erinner mich case study"><video src="/kit/canvas-erinner-mich.mp4" autoplay muted loop playsinline aria-label="Spotify Canvas loop for Erinner mich"></video></a>
@@ -147,8 +149,8 @@
           <div><span class="kit__tag">Social</span><h4>3 vertical cuts</h4><p>Reels, TikTok and Shorts versions cut around the hooks, not just cropped.</p></div>
         </div>
         <div class="kit__item">
-          <div class="kit__visual"><div class="phone"><video src="/kit/canvas-erinner-mich.mp4" autoplay muted loop playsinline aria-label="Spotify Canvas example"></video></div></div>
-          <div><span class="kit__tag">Streaming</span><h4>Spotify Canvas</h4><p>An eight-second loop that turns a stream into a share. Apple Motion Cover on request.</p></div>
+          <div class="kit__visual kit__visual--two"><div class="phone"><video src="/kit/canvas-erinner-mich.mp4" autoplay muted loop playsinline aria-label="Spotify Canvas example"></video></div><div class="phone"><video src="/kit/tyra-motion-cover.mp4" autoplay muted loop playsinline aria-label="Apple Motion Cover example"></video></div></div>
+          <div><span class="kit__tag">Streaming</span><h4>Spotify Canvas and Apple Motion Cover</h4><p>An eight-second loop for Spotify, and the high-res animated cover Apple Music asks for, built to pass its review.</p></div>
         </div>
         <div class="kit__item">
           <div class="kit__visual kit__visual--stack">
@@ -180,7 +182,7 @@
       <div class="section-head">
         <span class="eyebrow">Or just the piece you need</span>
         <h2 class="h2">Every item in the kit, <em>sold on its own.</em></h2>
-        <p class="lede">Nobody is forced into the full system. An audio visualizer, a promo pack, a Canvas set for the whole album, or a brand book: pick what the release is missing.</p>
+        <p class="lede">Nobody is forced into the full system. A lyric video, an audio visualizer, cover artwork or a promo clip pack: pick what the release is missing.</p>
       </div>
       <div class="svcs" data-services></div>
       <p class="small muted" style="margin-top:18px">Prices are starting points for a standard single under five minutes. The number you get in writing never goes up afterwards.</p>
@@ -193,10 +195,25 @@
       <div class="section-head">
         <span class="eyebrow">Custom lyric videos</span>
         <h2 class="h2">Designed for the song, <em>from $1,500.</em></h2>
-        <p class="lede">Recent lyric videos we delivered for artists and labels. Click any one to watch.</p>
+        <p class="lede">Recent lyric videos we delivered for artists and labels, across pop, rock, worship, Christmas and dance. Click any one to watch.</p>
       </div>
       <div class="grid3" data-lyric-videos></div>
       <div class="grid-actions"><button class="btn btn--ghost" type="button" data-lyric-videos-more>See more lyric videos</button></div>
+    </div>
+  </section>
+
+  <!-- Visuals wall: real deliverables from the smaller releases -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Recent visuals</span>
+        <h2 class="h2">Thumbnails, Canvases, trailers. <em>All client work.</em></h2>
+        <p class="lede">A rolling look at what leaves the studio besides the lyric video: style frames, thumbnail sets, Spotify Canvases and vertical cuts.</p>
+      </div>
+    </div>
+    <div class="vwall">
+      <div class="rmarq"><div class="rmarq__track" data-wall-a></div></div>
+      <div class="rmarq rmarq--rev"><div class="rmarq__track" data-wall-b></div></div>
     </div>
   </section>
 
@@ -205,7 +222,7 @@
     <div class="wrap">
       <div class="spot">
         <div class="spot__media">
-          <a class="yt" href="/releases/rock-it-out/" aria-label="Rock It Out kit page">
+          <a class="yt" href="/releases/rock-it-out/" data-ytcard="fYIrojE_OmM" aria-label="Rock It Out kit page">
             <img src="/kit/rockitout-thumb-11.webp" alt="Divi Roxx Kids, Rock It Out, official lyric video" width="800" height="450" loading="lazy" />
             <span class="yt__case">Full kit →</span>
           </a>
@@ -566,47 +583,44 @@
                   <option>Other</option>
                 </select>
               </label>
-              <label class="field"><span>Release window</span>
-                <select name="releaseWindow">
-                  <option>Less than a week (urgent)</option>
-                  <option>1 to 2 weeks</option>
-                  <option selected>2 to 4 weeks</option>
-                  <option>4 to 8 weeks</option>
-                  <option>Flexible</option>
-                </select>
-              </label>
+              <label class="field"><span>Release date (if set)</span><input name="releaseDate" type="date" /></label>
             </div>
-            <label class="field"><span>Artist and song title</span><input name="artist" type="text" placeholder="Artist, Song" /></label>
-            <label class="field"><span>Link to the song (private is fine)</span><input name="songLink" type="url" placeholder="Dropbox, Drive, SoundCloud or Spotify link" /></label>
-            <div class="form__row">
-              <label class="field"><span>Budget for this release</span>
-                <select name="budget">
-                  <option>$1,000 to $5,000</option>
-                  <option>$5,000 to $10,000</option>
-                  <option>$10,000 to $20,000</option>
-                  <option>Under $1,000</option>
-                </select>
-              </label>
-              <label class="field"><span>Interested in</span>
-                <select name="service">
-                  <option>Release Kit</option>
-                  <option>Launch System</option>
-                  <option>Campaign (three releases)</option>
-                  <option>Custom lyric video</option>
-                  <option>Audio visualizer</option>
-                  <option>Cover artwork</option>
-                  <option>Promo clip pack</option>
-                  <option>Thumbnail pack</option>
-                  <option>Spotify Canvas</option>
-                  <option>Full brand guidelines</option>
-                  <option>Not sure yet</option>
-                </select>
-              </label>
-            </div>
-            <label class="field"><span>Anything we should know</span><textarea name="message" rows="3" placeholder="References, deadlines, what the last release was missing"></textarea></label>
+            <fieldset class="field picks">
+              <legend>What are you releasing?</legend>
+              <div class="picks__row">
+                <label class="pick"><input type="radio" name="releasePlan" value="One single" /><span>One single</span></label>
+                <label class="pick"><input type="radio" name="releasePlan" value="EP or album" /><span>EP or album</span></label>
+                <label class="pick"><input type="radio" name="releasePlan" value="Several releases" /><span>Several releases</span></label>
+              </div>
+            </fieldset>
+            <label class="field"><span>Budget for this release</span>
+              <select name="budget">
+                <option>Not sure yet</option>
+                <option>Under $2,500</option>
+                <option>$2,500 to $5,000</option>
+                <option>$5,000 to $12,000</option>
+                <option>$12,000 and up</option>
+              </select>
+            </label>
+            <input type="hidden" name="service" />
+            <!-- Honeypot: hidden from people, filled by bots; the Function drops any submission that has it. -->
+            <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <label class="field"><span>Tell us about your release</span><textarea name="message" rows="5" placeholder="Artist and song, links to the track or any references, your ideas and requirements, and anything else you would like to discuss."></textarea></label>
+            <fieldset class="field picks" data-source>
+              <legend>How did you find us?</legend>
+              <div class="picks__row">
+                <label class="pick"><input type="radio" name="source" value="Google" /><span>Google</span></label>
+                <label class="pick"><input type="radio" name="source" value="Instagram" /><span>Instagram</span></label>
+                <label class="pick"><input type="radio" name="source" value="LinkedIn" /><span>LinkedIn</span></label>
+                <label class="pick"><input type="radio" name="source" value="YouTube" /><span>YouTube</span></label>
+                <label class="pick"><input type="radio" name="source" value="Other" /><span>Other</span></label>
+              </div>
+              <input class="picks__other" name="sourceOther" type="text" placeholder="Where did you hear about us?" aria-label="Where did you hear about us?" hidden />
+            </fieldset>
             <p class="form__error" aria-live="polite"></p>
             <button class="btn btn--accent" type="submit" style="width:100%">Send my release</button>
-            <p class="form__note">We reply within 24 hours. Your files stay private.</p>
+            <a class="btn btn--ghost" style="width:100%;margin-top:10px" href="mailto:contact@lyricvideo.tv?subject=Release%3A%20&amp;body=Hi%20Umesh%2C%0A%0AArtist%20and%20song%3A%0ARelease%20date%3A%0ALinks%20(track%2C%20references%2C%20files)%3A%0A%0AAnything%20else%3A%0A">Or email us instead</a>
+            <p class="form__note">Umesh reads every one of these and replies within 24 hours. Nothing you send is shared, and we will sign an NDA first if you prefer.</p>
           </form>
           <div class="form__done"></div>
         </div>
@@ -647,6 +661,22 @@
     <div class="modal__box"></div>
     <button class="modal__close" type="button" data-modal-close aria-label="Close">×</button>
   </div>
+
+  <!-- Quick plan popup: every "Plan your release" link opens this; the form
+       itself is moved in from #plan while open, so there is only one form. -->
+  <div class="leadbox" data-leadbox aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="leadbox-title">
+    <div class="leadbox__backdrop" data-leadbox-close></div>
+    <div class="leadbox__panel">
+      <button class="leadbox__close" type="button" data-leadbox-close aria-label="Close">×</button>
+      <span class="eyebrow">Plan your release</span>
+      <h2 class="h3" id="leadbox-title">Tell us the window. We reply within 24 hours.</h2>
+      <div data-leadbox-slot></div>
+    </div>
+  </div>
+
+  <button class="totop" type="button" data-totop aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
 
   <script type="module" src="/src/main.js"></script>
 </body>

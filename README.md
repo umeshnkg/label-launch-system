@@ -34,12 +34,19 @@ npm run preview    # serve dist/ on http://localhost:4180
 
 ## Lead form
 
-`functions/api/lead.js` is a Cloudflare Pages Function. It creates a ClickUp task in the "fresh leads" list and emails a copy through Resend. Environment variables (Cloudflare Pages settings, and `.dev.vars` locally):
+`functions/api/lead.js` is a Cloudflare Pages Function. It creates a ClickUp task in the "fresh leads" list, emails a copy through Resend, and sends the lead a confirmation signed Umesh. Environment variables (Cloudflare Pages settings, and `.dev.vars` locally):
 
 - `CLICKUP_API_TOKEN`, `CLICKUP_LIST_ID`
 - `RESEND_API_KEY` (optional), `LEAD_NOTIFY_EMAIL` (default contact@lyricvideo.tv)
+- `LEAD_PHONE` (default +1 (606) 227 4600): shown only to leads the Function rates warm or hot, on the thank-you screen and in the confirmation email
 
-The sender is `noreply@labellaunchsystem.com`; the domain is verified in Resend (account umeshnkg) with the DKIM TXT, the `rsend`/`send` CNAMEs and a DMARC TXT in Cloudflare DNS. Delivery errors show in Pages -> deployment -> Functions -> Real-time logs. Leads with budget "Under $1,000" are tagged `route-to-mlv` and the thank-you message points to makelyricvideo.com/pro.
+The sender is `noreply@labellaunchsystem.com`; the domain is verified in Resend (account umeshnkg) with the DKIM TXT, the `rsend`/`send` CNAMEs and a DMARC TXT in Cloudflare DNS. Delivery errors show in Pages -> deployment -> Functions -> Real-time logs.
+
+Fields and triage (decision record: `UG Brain/plan/label-launch-system-site/lead-form-intake-synthesis.md` in the vault):
+
+- The form asks name, email, role, release date, what is being released, budget band, a free-text brief and how they found us. Nothing but name and email is required. A hidden honeypot input (`website`) drops bot submissions.
+- The Function scores each lead on the signals that preceded every past $3K+ account (company-domain email, a referral mentioned, a release date, several songs, a link, a 40+ word brief, "our artist" language; an outreach link `/?ref=<slug>` counts double and is hot by definition). Score 4+ = `hot` (priority 1), 2 to 3 = `warm` (2), else `cold` (3). Role and budget are not scored.
+- ClickUp custom fields are filled **by name**, so they can be added or renamed in ClickUp without a code change; missing ones are skipped. Expected on the list: Email, 👋 Client's Name, Est. Budget $ (existing), plus Release Date (date), Release Window, Release Plan, Lead Role, Lead Source (dropdowns; option names must match the form values) and Lead Score (number).
 
 ## Deploy
 
