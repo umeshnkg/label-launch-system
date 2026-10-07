@@ -21,6 +21,7 @@ export const FEATURED = [
     turnaround: '19 days',
     poster: '/kit/erinner-mich-thumb.webp',
     canvas: '/kit/canvas-erinner-mich.mp4',
+    loop: true, // seamless: last frame matches the first (checked 2026-10-07)
     gallery: ['/kit/erinner-mich-thumb.webp', '/kit/erinner-thumb-2.webp', '/kit/erinner-thumb-5.webp', '/kit/erinner-thumb-7.webp'],
     requirement: 'A lyric video that could carry a German dance single on YouTube for months, plus a two-week social countdown the label could run without a designer on call.',
     deliverables: [
@@ -46,6 +47,7 @@ export const FEATURED = [
     turnaround: '9 days',
     poster: '/thumbs/C7N_52T1Hm8.webp',
     canvas: '/kit/canvas-time-out.mp4',
+    canvasSpec: false, // the web copy is 2:3, not 9:16, so no Canvas blueprint panel
     vertical: '/kit/timeout-story.mp4',
     gallery: [],
     social: { views: '86K', note: '3 promo Shorts on the HBz channel', ids: ['em2oU3foGPk', 'jX194D5MGjY', 's0Cn51IlzAo'] },
@@ -141,6 +143,7 @@ export const FEATURED = [
     turnaround: '22 days',
     poster: '/thumbs/IrJFtY_qtxE.webp',
     canvas: '/kit/canvas-masochist.mp4',
+    loop: true, // seamless: last frame matches the first (checked 2026-10-07)
     gallery: [],
     requirement: 'A lyric video for a rap and dance collaboration released on the rapper’s own channel, with a teaser set in Story and Feed formats for both artists to post.',
     deliverables: [
@@ -165,6 +168,7 @@ export const FEATURED = [
     turnaround: '3 days early', turnaroundLabel: 'Delivered before release',
     poster: '/thumbs/I5Rfl6UbPzw.webp',
     canvas: '/kit/canvas-leonardo.mp4',
+    loop: true, // seamless: last frame matches the first (checked 2026-10-07)
     gallery: [],
     requirement: 'A lyric video for a romantic regional single about a couple everyone judges, with promo clips in coming-soon and out-now versions and a Canvas, all timed to a July release date.',
     deliverables: [
@@ -190,7 +194,87 @@ export const FEATURED = [
     turnaround: '25 days',
     poster: '/thumbs/sf4xhkoMCvw.webp',
     canvas: '/kit/canvas-paradise.mp4',
+    loop: true, // seamless: last frame matches the first (checked 2026-10-07)
+    // First 9 s of promo Short kJTRyFmAHDQ (LUNAX channel), muted.
+    vertical: '/kit/paradise-teaser.mp4',
     gallery: ['/kit/paradise-moodboard.webp', '/kit/paradise-styleframes.webp', '/kit/paradise-thumb-1.webp', '/kit/paradise-thumb-2.webp', '/kit/paradise-thumb-3.webp'],
+
+    // ---- Visual case study (pilot). Any release can opt in by adding these. ----
+    // One line under the title: the selling point, not the summary.
+    promise: 'One song in. Fifteen files out, one look, each made for the screen it plays on.',
+    // Before: what the label sent (Umesh, 2026-10-08: audio, lyrics, a set of photos).
+    input: ['Master audio', 'Lyrics', 'A set of photos'],
+    inputNote: 'Photos are optional. The song alone is enough to start.',
+    // After: the kit, as mockups. n = number of files. Web copies of the
+    // Dropbox delivery (Promo Materials, Spotify Canvas), 2026-10-08. The
+    // Motion Covers were re-exports of the Canvases, and the rollout plan is
+    // not a selling point, so neither is shown.
+    kit: [
+      { type: 'yt', label: 'Lyric video', n: 1, img: '/thumbs/sf4xhkoMCvw.webp' },
+      { type: 'pack', ui: 'reels', label: 'Promo clips', n: 6, unit: 'cuts', items: [
+        { video: '/kit/paradise-teaser.mp4', poster: '/kit/paradise-teaser-poster.webp', label: 'Teaser, Coming Soon' },
+        { video: '/kit/paradise-promo-teaser.mp4', poster: '/kit/paradise-promo-teaser-poster.webp', label: 'Teaser' },
+        { video: '/kit/paradise-promo-teaser-now.mp4', poster: '/kit/paradise-promo-teaser-now-poster.webp', label: 'Teaser, Out Now' },
+        { video: '/kit/paradise-promo-trailer.mp4', poster: '/kit/paradise-promo-trailer-poster.webp', label: 'Trailer' },
+        { video: '/kit/paradise-promo-trailer-soon.mp4', poster: '/kit/paradise-promo-trailer-soon-poster.webp', label: 'Trailer, Coming Soon' },
+        { video: '/kit/paradise-promo-trailer-now.mp4', poster: '/kit/paradise-promo-trailer-now-poster.webp', label: 'Trailer, Out Now' },
+      ] },
+      { type: 'pack', ui: 'spotify', label: 'Spotify Canvas', n: 3, unit: 'versions', items: [
+        { video: '/kit/canvas-paradise-lunax.mp4', poster: '/kit/canvas-paradise-lunax-poster.webp', label: 'LUNAX' },
+        { video: '/kit/canvas-paradise-ceres.mp4', poster: '/kit/canvas-paradise-ceres-poster.webp', label: 'CERES' },
+        { video: '/kit/canvas-paradise-neutral.mp4', poster: '/kit/canvas-paradise-neutral-poster.webp', label: 'Neutral' },
+      ] },
+      { type: 'ab', label: 'Thumbnails', n: 3, unit: 'designs', items: ['/kit/paradise-thumb-1.webp', '/kit/paradise-thumb-2.webp', '/kit/paradise-thumb-3.webp'] },
+      { type: 'look', label: 'The look', n: 2, unit: 'boards', items: ['/kit/paradise-moodboard.webp', '/kit/paradise-styleframes.webp'] },
+    ],
+    // One look: where the palette came from, and where it went. Dot positions
+    // are percentages of each image, measured with PIL on 2026-10-08. The photo
+    // gives the blue light and the black jacket; the references give the rest.
+    look: {
+      // LUNAX: the blue light on her braids and the black jacket, then her
+      // cream jacket. CERES: her red dress and hair. Yellow is the one colour
+      // that came from the references (Assets/q.png has no usable yellow).
+      photos: [
+        { src: '/kit/paradise-lunax-photo.webp', ar: '429 / 760', label: 'LUNAX', dots: [{ x: 61, y: 16, c: '#3ebfd5' }, { x: 49, y: 65, c: '#09212b' }] },
+        { src: '/kit/paradise-ceres-photo.webp', ar: '372 / 760', label: 'CERES', dots: [{ x: 39, y: 42, c: '#fe3864' }] },
+        { src: '/kit/paradise-lunax-photo-2.webp', ar: '670 / 760', label: 'LUNAX', dots: [{ x: 68, y: 51, c: '#f5f3ef' }] },
+      ],
+      refs: '/kit/paradise-moodboard.webp',
+      refDots: [{ x: 43, y: 65, c: '#f6e80b' }],
+      palette: ['#fe3864', '#f6e80b', '#3ebfd5', '#09212b', '#f5f3ef'],
+      outputs: [
+        { img: '/kit/paradise-thumb-2.webp', label: 'Lyric video' },
+        { video: '/kit/canvas-paradise-lunax.mp4', poster: '/kit/canvas-paradise-lunax-poster.webp', label: 'Canvas' },
+        { video: '/kit/paradise-teaser.mp4', poster: '/kit/paradise-teaser-poster.webp', label: 'Promo clip' },
+        { img: '/kit/paradise-thumb-1.webp', label: 'Thumbnail' },
+      ],
+    },
+    // Process: steps, never days. optional: true draws a dashed step that the
+    // Rush toggle removes.
+    // Titles only: the images carry the message. Mood board and style frames
+    // are one step because the label approves them together.
+    process: [
+      { title: 'Brief', brief: true },
+      { title: 'The look', img2: ['/kit/paradise-moodboard.webp', '/kit/paradise-styleframes.webp'], optional: true, stamp: true },
+      // 0:40 to 0:48 of the finished video (YouTube 720p), as the preview.
+      { title: 'First cut', video: '/kit/paradise-firstcut.mp4', poster: '/kit/paradise-firstcut-poster.webp', player: true, stamp: true },
+      { title: 'Preview + teaser', video: '/kit/paradise-teaser.mp4', tag: 'Teaser out' },
+      { title: 'Final + kit', folder: true },
+    ],
+    thumbs: ['/kit/paradise-thumb-2.webp', '/kit/paradise-thumb-1.webp', '/kit/paradise-thumb-3.webp'],
+    // Face guide on a Canvas still (3.0 s). Percentages of the 9:16 frame,
+    // measured on a 10x20 grid: box = [left, top, width, height].
+    face: { still: '/kit/paradise-canvas-face.webp', box: [59, 33, 28, 19], eyes: 40.5, mouth: 47 },
+    // Karin, 2025-03-14, thread "AW: AW: LUNAX (feat. CERES) - Paradise"; Google review 2025-03-24.
+    quotes: [
+      { kind: 'email', q: 'Our team watched the video and we all think it’s amazing! We really love it!', name: 'Karin Wir', role: 'Product & Artist Manager, Beat Dealer Records', subject: 'AW: AW: LUNAX (feat. CERES) - Paradise', when: 'Mar 14, 2025' },
+      { kind: 'google', q: 'Always a good partner!', name: 'Karin Wir', role: 'Beat Dealer Records', stars: 5 },
+    ],
+    // ClickUp: two Beat Dealer orders, Nov 2024 and Feb 2025.
+    repeat: { line: 'Beat Dealer came back for LUNAX.', releases: [
+      { id: 'OHTzpZo8G6A', title: 'One Last Kiss For Christmas', year: 2024 },
+      { id: 'sf4xhkoMCvw', title: 'Paradise ft. CERES', year: 2025, current: true },
+    ] },
     social: { views: '9K', note: '3 promo Shorts on the LUNAX channel', ids: ['xGYOPmxqMgo', 'kJTRyFmAHDQ', '_8hnlaHSae4'] },
     requirement: 'A lyric video and release pack for a dance single shared by two artists: mood board and style frames first, then a Canvas for each artist, the Apple Motion Cover and a thumbnail set.',
     deliverables: [
