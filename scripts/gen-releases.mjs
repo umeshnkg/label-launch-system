@@ -337,13 +337,26 @@ function page(r, idx) {
   <title>${esc(titleTag)}</title>
   <meta name="description" content="${esc(r.description)}" />
   <link rel="canonical" href="${url}" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#0b0b0c" />
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="${esc(`${r.artist}, ${r.title}: ${r.views} views`)}" />
-  <meta property="og:description" content="${esc(r.summary)}" />
-  <meta property="og:image" content="https://labellaunchsystem.com${r.poster}" />
+  <meta property="og:site_name" content="Label Launch System" />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:url" content="${url}" />
+  <meta property="og:title" content="${esc(`${r.artist}, "${r.title}": ${r.views} views`)}" />
+  <meta property="og:description" content="${esc(r.summary)}" />
+  <meta property="og:image" content="https://labellaunchsystem.com/og/${r.slug}.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="${esc(`Release case study: ${r.artist}, "${r.title}", ${r.views} YouTube views`)}" />
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b0c'/%3E%3Ccircle cx='23' cy='9' r='4' fill='%23e5261f'/%3E%3C/svg%3E" />
+  <meta name="twitter:title" content="${esc(`${r.artist}, "${r.title}": ${r.views} views`)}" />
+  <meta name="twitter:description" content="${esc(r.summary)}" />
+  <meta name="twitter:image" content="https://labellaunchsystem.com/og/${r.slug}.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..600&display=swap" rel="stylesheet" />
