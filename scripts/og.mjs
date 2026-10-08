@@ -259,6 +259,119 @@ Object.assign(CONCEPTS, {
   `),
 });
 
+// Round 3 (2026-10-08): Umesh's pick = round-1 "kit" layout with headlines 1, 2 and 4,
+// and the screens drawn as the real apps: YouTube watch card, Instagram Reels, Spotify Canvas.
+// All one release (LUNAX "Paradise", Beat Dealer Records) so the card also says "one look".
+// No invented like/comment counts; the only number shown is the real YouTube view count.
+const I = {
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.2 3.3 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.7 0 6 3.7 4.5 7.3C19.5 16.4 12 21 12 21z"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3.5 20l1.2-4.2A8.5 8.5 0 1 1 20.5 11.5z"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 3 9.2 10.4M22 3l-7 18-3.8-8.6L2 9.5z"/></svg>',
+  dots: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  prev: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg>',
+  next: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>',
+  cam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  ytplay: '<svg viewBox="0 0 28 20"><rect width="28" height="20" rx="6" fill="#ff0033"/><path d="M11 5.5v9l8-4.5z" fill="#fff"/></svg>',
+};
+const kitStage = () => `
+  <div class="stage">
+    <div class="ytc">
+      <div class="ytc__img"><img src="kit/paradise-thumb-2.webp"><i class="ytc__bar"></i></div>
+      <div class="ytc__meta"><img class="av" src="channels/lunax.jpg"><div><b>LUNAX - Paradise (feat. CERES) (Official Video)</b><span>LUNAX · 388K views</span></div></div>
+    </div>
+    <div class="ph ph--reels">
+      <img class="ph__v" src="kit/paradise-promo-teaser-poster.webp">
+      <div class="rl__top"><b>Reels</b>${I.cam}</div>
+      <div class="rl__side">${I.heart}${I.chat}${I.send}${I.dots}</div>
+      <div class="rl__bot"><div class="rl__acc"><img src="channels/lunax.jpg"><b>LUNAX</b><span>Follow</span></div><p>Paradise, out 04/04</p><p class="rl__aud">♫ LUNAX, CERES · Paradise</p></div>
+    </div>
+    <div class="ph ph--spot">
+      <img class="ph__v" src="kit/canvas-paradise-lunax-poster.webp">
+      <div class="sp__top">${I.down}<span>PLAYING FROM ARTIST<b>LUNAX</b></span>${I.dots}</div>
+      <div class="sp__bot">
+        <div class="sp__row"><div><b>Paradise</b><span>LUNAX, CERES</span></div>${I.plus}</div>
+        <div class="sp__bar"><i></i></div>
+        <div class="sp__ctl">${I.prev}<span class="sp__play">${I.play}</span>${I.next}</div>
+      </div>
+    </div>
+    <span class="tag t1">${I.ytplay}YouTube</span><span class="tag t2"><i class="spdot"></i>Spotify Canvas</span><span class="tag t3"><i class="igdot"></i>Reels</span>
+  </div>`;
+const KIT3 = `
+  body { background: #fff; color: #0b0b0c; }
+  body::before { content: ''; position: absolute; right: -150px; top: -170px; width: 780px; height: 780px; border-radius: 50%; background: #fdecea; }
+  .left { position: absolute; left: 64px; top: 58px; bottom: 54px; width: 470px; display: flex; flex-direction: column; z-index: 3; }
+  h1 { font-weight: 900; letter-spacing: -0.05em; line-height: .95; }
+  .foot { margin-top: auto; }
+  .days { margin-top: 34px; font-size: 64px; font-weight: 900; letter-spacing: -0.05em; line-height: .9; }
+  .stats2 { display: flex; gap: 28px; margin-top: 34px; }
+  .stats2 b { display: block; font-size: 38px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+  .stats2 b em { color: #e5261f; }
+  .stats2 span { display: block; margin-top: 6px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #8a8b91; }
+  .stage { position: absolute; right: 26px; top: 40px; width: 640px; height: 560px; font-family: Roboto, 'Inter', sans-serif; }
+  .ytc { position: absolute; left: 0; top: 96px; width: 420px; background: #fff; border-radius: 14px; box-shadow: 0 26px 60px rgba(0,0,0,.22); overflow: hidden; }
+  .ytc__img { position: relative; }
+  .ytc__img img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+  .ytc__bar { position: absolute; left: 0; bottom: 0; height: 4px; width: 38%; background: #ff0033; }
+  .ytc__meta { display: flex; gap: 10px; padding: 11px 12px 13px; }
+  .ytc__meta .av { width: 34px; height: 34px; border-radius: 50%; flex: none; }
+  .ytc__meta > div { max-width: 205px; }
+  .ytc__meta b { display: block; font-size: 13.5px; line-height: 1.3; font-weight: 600; color: #0f0f0f; }
+  .ytc__meta span { display: block; font-size: 12.5px; color: #606060; margin-top: 3px; }
+  .ph { position: absolute; border-radius: 30px; background: #0b0b0c; padding: 6px; box-shadow: 0 30px 60px rgba(0,0,0,.32); color: #fff; }
+  .ph__v { width: 100%; height: 100%; object-fit: cover; border-radius: 25px; display: block; }
+  .ph svg { width: 18px; height: 18px; }
+  .ph--spot { right: 8px; top: 18px; width: 220px; height: 462px; transform: rotate(4deg); z-index: 3; }
+  .ph--reels { right: 196px; top: 128px; width: 186px; height: 392px; transform: rotate(-6deg); z-index: 2; }
+  .ph--spot::after, .ph--reels::after { content: ''; position: absolute; inset: 6px; border-radius: 25px; pointer-events: none; }
+  .ph--spot::after { background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 55%, rgba(0,0,0,.75) 100%); }
+  .ph--reels::after { background: linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 18%, rgba(0,0,0,0) 60%, rgba(0,0,0,.7) 100%); }
+  .sp__top, .sp__bot, .rl__top, .rl__side, .rl__bot { position: absolute; z-index: 2; }
+  .sp__top { left: 18px; right: 18px; top: 22px; display: flex; align-items: center; justify-content: space-between; }
+  .sp__top span { font-size: 8.5px; letter-spacing: .08em; text-align: center; opacity: .85; }
+  .sp__top span b { display: block; font-size: 11px; letter-spacing: 0; opacity: 1; }
+  .sp__bot { left: 18px; right: 18px; bottom: 20px; }
+  .sp__row { display: flex; align-items: center; justify-content: space-between; }
+  .sp__row b { display: block; font-size: 17px; font-weight: 700; }
+  .sp__row span { display: block; font-size: 12px; opacity: .75; margin-top: 1px; }
+  .sp__bar { margin-top: 12px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.3); }
+  .sp__bar i { display: block; height: 100%; width: 34%; background: #fff; border-radius: 3px; }
+  .sp__ctl { margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 22px; }
+  .sp__play { width: 42px; height: 42px; border-radius: 50%; background: #fff; color: #000; display: grid; place-items: center; }
+  .sp__play svg { width: 22px; height: 22px; }
+  .rl__top { left: 16px; right: 16px; top: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 15px; }
+  .rl__side { right: 12px; bottom: 96px; display: flex; flex-direction: column; gap: 16px; }
+  .rl__side svg { width: 20px; height: 20px; }
+  .rl__bot { left: 14px; right: 44px; bottom: 18px; font-size: 11px; }
+  .rl__acc { display: flex; align-items: center; gap: 6px; }
+  .rl__acc img { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #fff; }
+  .rl__acc b { font-size: 11.5px; }
+  .rl__acc span { border: 1px solid rgba(255,255,255,.7); border-radius: 6px; padding: 1px 6px; font-size: 10px; font-weight: 600; }
+  .rl__bot p { margin-top: 6px; }
+  .rl__aud { opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tag { position: absolute; z-index: 4; display: flex; align-items: center; gap: 8px; background: #0b0b0c; color: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; padding: 8px 14px; border-radius: 999px; box-shadow: 0 8px 20px rgba(0,0,0,.18); }
+  .tag svg { width: 24px; height: 17px; }
+  .t1 { left: 12px; top: 56px; } .t2 { right: 0; top: 0; } .t3 { right: 250px; bottom: 6px; }
+  .spdot { width: 16px; height: 16px; border-radius: 50%; background: #1ed760; }
+  .igdot { width: 16px; height: 16px; border-radius: 5px; background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); }
+`;
+const kit3 = (headline, extra = '') => page(`
+  <div class="left">
+    <div class="brand"><span class="mark"></span>Label Launch System</div>
+    ${headline}
+    ${extra}
+    <div class="foot"><span class="url">labellaunchsystem.com</span></div>
+  </div>
+  ${kitStage()}
+`, KIT3, 'light');
+Object.assign(CONCEPTS, {
+  kitmusic: () => kit3('<h1 style="margin-top:60px;font-size:84px">Music in.<br><em>Visuals&nbsp;out.</em></h1>', '<div class="days"><em>10</em> days</div>'),
+  kitonesong: () => kit3('<h1 style="margin-top:52px;font-size:74px;display:flex;flex-direction:column;gap:4px"><span><em>1</em> song.</span><span>Every visual.</span><span><em>10</em> days.</span></h1>'),
+  kitpartner: () => kit3('<h1 style="margin-top:56px;font-size:80px">The visual partner<br><em>for labels.</em></h1>', `<div class="stats2"><div><b><em>10</em></b><span>Days</span></div><div><b>19.5M</b><span>Views</span></div><div><b>10+</b><span>Years</span></div></div>`),
+});
+
 // One card per case study: the release artwork, the artist and the view count.
 const caseCard = (r) => page(`
   <div class="art"><img src="${r.poster.replace(/^\//, '')}"></div>
