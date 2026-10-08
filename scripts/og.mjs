@@ -144,6 +144,121 @@ const CONCEPTS = {
   `, 'light'),
 };
 
+// Round 2 (2026-10-08): fewer words, numbers as the shape people recognise first.
+// Shared pieces: a thin wall strip of real work, a stat strip, a giant number.
+const strip = (n = 3) => `<div class="strip">${[0, 1].map((c) => `<div class="col">${WALL.slice(c * 6, c * 6 + 6).concat(WALL.slice(c * 6, c * 6 + n)).map((s) => `<img src="${s}">`).join('')}</div>`).join('')}</div>`;
+const stats = (items) => `<div class="stats2">${items.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('')}</div>`;
+const R2 = `
+  .in { position: absolute; inset: 58px 64px 54px; display: flex; flex-direction: column; z-index: 2; }
+  h1 { font-weight: 900; letter-spacing: -0.05em; line-height: .95; }
+  .foot { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+  .strip { position: absolute; right: -40px; top: -140px; width: 420px; height: 950px; display: flex; gap: 12px; transform: rotate(8deg); }
+  .strip::before { content: ''; position: absolute; inset: 0; z-index: 2; background: linear-gradient(90deg, #0b0b0c 0%, rgba(11,11,12,0) 35%); }
+  .light .strip::before { background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0) 35%); }
+  .strip .col { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+  .strip .col + .col { margin-top: -70px; }
+  .strip img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 10px; }
+  .stats2 { display: flex; gap: 34px; }
+  .stats2 b { display: block; font-size: 40px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+  .stats2 b em { color: #e5261f; }
+  .stats2 span { display: block; margin-top: 6px; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; opacity: .6; }
+  .dark { background: #0b0b0c; color: #fff; }
+  .light { background: #fff; color: #0b0b0c; }
+`;
+Object.assign(CONCEPTS, {
+  // 1. Music in. Visuals out. + giant 10 days.
+  musicin: () => page(`
+    <div class="in">
+      <div class="brand"><span class="mark"></span>Label Launch System</div>
+      <h1 style="margin-top:70px;font-size:118px">Music in.<br><em>Visuals out.</em></h1>
+      <div class="foot"><span class="url">labellaunchsystem.com</span></div>
+    </div>
+    <div class="big"><b>10</b><span>days</span></div>
+  `, R2 + `
+    .big { position: absolute; right: 64px; bottom: 40px; text-align: right; }
+    .big { right: 56px; bottom: 50px; }
+    .big b { display: block; font-size: 330px; font-weight: 900; letter-spacing: -0.08em; line-height: .78; color: #e5261f; }
+    .big span { display: block; font-size: 56px; font-weight: 900; letter-spacing: -0.04em; color: #fff; margin-top: 10px; }
+  `),
+
+  // 2. Numbers as the headline: 1 song. Every visual. 10 days.
+  onesong: () => page(`
+    <div class="in">
+      <div class="brand"><span class="mark"></span>Label Launch System</div>
+      <h1 class="n" style="margin-top:46px"><span><em>1</em> song.</span><span>Every visual.</span><span><em>10</em> days.</span></h1>
+      <div class="foot"><span class="url">labellaunchsystem.com</span></div>
+    </div>
+    ${strip()}
+  `, R2 + `
+    h1.n { font-size: 92px; display: flex; flex-direction: column; gap: 6px; }
+    h1.n em { font-size: 1.15em; }
+  `),
+
+  // 3. Turn one song into a full rollout + stat strip. Light.
+  rollout: () => page(`
+    <div class="in">
+      <div class="brand"><span class="mark"></span>Label Launch System</div>
+      <h1 style="margin-top:50px;font-size:104px;max-width:1000px">Turn one song into a <em>full&nbsp;rollout.</em></h1>
+      <div class="foot">${stats([['<em>10</em>', 'Days'], ['19.5M', 'Views, one video'], ['800+', 'Projects']])}<span class="url">labellaunchsystem.com</span></div>
+    </div>
+  `, R2 + `
+    body::after { content: ''; position: absolute; right: 64px; top: 58px; width: 22px; height: 22px; border-radius: 50%; background: #e5261f; box-shadow: 0 0 0 10px #fdecea; }
+    .foot { border-top: 1px solid #e6e6e8; padding-top: 26px; }
+  `, 'light'),
+
+  // 4. Visual partner for labels + stats, wall strip. Dark.
+  partner: () => page(`
+    <div class="in">
+      <div class="brand"><span class="mark"></span>Label Launch System</div>
+      <h1 style="margin-top:50px;font-size:92px;max-width:700px">The visual partner<br><em>for labels.</em></h1>
+      <div class="foot">${stats([['<em>10</em>', 'Days'], ['19.5M', 'Views'], ['10+', 'Years']])}</div>
+    </div>
+    ${strip()}
+  `, R2),
+
+  // 5. Proof as headline: 19.5M views. One song.
+  views: () => page(`
+    <img class="bg" src="kit/erinner-mich-thumb.webp">
+    <div class="shade"></div>
+    <div class="in">
+      <div class="brand"><span class="mark"></span>Label Launch System</div>
+      <h1 style="margin-top:40px"><em class="m">19.5M</em><span class="s">views from one song's visuals.<br>Yours next, in <em>10 days.</em></span></h1>
+      <div class="foot"><span class="url">labellaunchsystem.com</span></div>
+    </div>
+  `, R2 + `
+    .bg { position: absolute; right: 0; top: 0; height: 100%; width: 70%; object-fit: cover; }
+    .shade { position: absolute; inset: 0; background: linear-gradient(90deg, #0b0b0c 35%, rgba(11,11,12,.7) 65%, rgba(11,11,12,.3) 100%); }
+    .m { display: block; font-size: 210px; letter-spacing: -0.06em; line-height: .85; }
+    .s { display: block; margin-top: 22px; font-size: 48px; letter-spacing: -0.035em; line-height: 1.05; font-weight: 800; }
+  `),
+
+  // 6. Speed as a question. Light, giant red 10.
+  releasein: () => page(`
+    <div class="in">
+      <div class="brand"><span class="mark"></span>Label Launch System</div>
+      <h1 style="margin-top:60px;font-size:80px;max-width:640px">Release in <em>10&nbsp;days?</em><br>Every visual, ready.</h1>
+      <div class="foot"><span class="url">labellaunchsystem.com</span></div>
+    </div>
+    <div class="ten">10</div>
+  `, R2 + `
+    .ten { position: absolute; right: 40px; font-size: 470px; font-weight: 900; letter-spacing: -0.08em; line-height: .8; color: #e5261f; bottom: 40px; }
+  `, 'light'),
+
+  // 7. One song. Full rollout. With the format list as the second line of shapes.
+  formats: () => page(`
+    <div class="in">
+      <div class="brand"><span class="mark"></span>Label Launch System</div>
+      <h1 style="margin-top:46px;font-size:100px">One song.<br><em>Full rollout.</em></h1>
+      <div class="chips">${['Cover', 'Lyric video', 'Canvas', 'Reels', 'Thumbnails', 'Trailers'].map((c) => `<span>${c}</span>`).join('')}</div>
+      <div class="foot"><span class="url">labellaunchsystem.com</span><span class="days"><em>10</em> days</span></div>
+    </div>
+  `, R2 + `
+    .chips { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 10px; max-width: 900px; }
+    .chips span { border: 2px solid rgba(255,255,255,.25); border-radius: 999px; padding: 9px 18px; font-size: 21px; font-weight: 700; }
+    .days { font-size: 64px; font-weight: 900; letter-spacing: -0.05em; line-height: .9; }
+  `),
+});
+
 // One card per case study: the release artwork, the artist and the view count.
 const caseCard = (r) => page(`
   <div class="art"><img src="${r.poster.replace(/^\//, '')}"></div>
