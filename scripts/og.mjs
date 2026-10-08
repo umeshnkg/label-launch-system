@@ -276,7 +276,7 @@ const I = {
   cam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/></svg>',
   ytplay: '<svg viewBox="0 0 28 20"><rect width="28" height="20" rx="6" fill="#ff0033"/><path d="M11 5.5v9l8-4.5z" fill="#fff"/></svg>',
 };
-const kitStage = () => `
+const kitStage = (tags = true) => `
   <div class="stage">
     <div class="ytc">
       <div class="ytc__img"><img src="kit/paradise-thumb-2.webp"><i class="ytc__bar"></i></div>
@@ -297,7 +297,7 @@ const kitStage = () => `
         <div class="sp__ctl">${I.prev}<span class="sp__play">${I.play}</span>${I.next}</div>
       </div>
     </div>
-    <span class="tag t1">${I.ytplay}YouTube</span><span class="tag t2"><i class="spdot"></i>Spotify Canvas</span><span class="tag t3"><i class="igdot"></i>Reels</span>
+    ${tags ? '' : '<!--'}<span class="tag t1">${I.ytplay}YouTube</span><span class="tag t2"><i class="spdot"></i>Spotify Canvas</span><span class="tag t3"><i class="igdot"></i>Reels</span>${tags ? '' : '-->'}
   </div>`;
 const KIT3 = `
   body { background: #fff; color: #0b0b0c; }
@@ -370,6 +370,27 @@ Object.assign(CONCEPTS, {
   kitmusic: () => kit3('<h1 style="margin-top:60px;font-size:84px">Music in.<br><em>Visuals&nbsp;out.</em></h1>', '<div class="days"><em>10</em> days</div>'),
   kitonesong: () => kit3('<h1 style="margin-top:52px;font-size:74px;display:flex;flex-direction:column;gap:4px"><span><em>1</em> song.</span><span>Every visual.</span><span><em>10</em> days.</span></h1>'),
   kitpartner: () => kit3('<h1 style="margin-top:56px;font-size:80px">The visual partner<br><em>for labels.</em></h1>', `<div class="stats2"><div><b><em>10</em></b><span>Days</span></div><div><b>19.5M</b><span>Views</span></div><div><b>10+</b><span>Years</span></div></div>`),
+});
+
+// Round 4 (2026-10-08): option A without the app labels and without "10 days";
+// headline lower and bigger. Four takes on size and position.
+const kit4 = (h, css = '') => page(`
+  <div class="left">
+    <div class="brand"><span class="mark"></span>Label Launch System</div>
+    ${h}
+    <div class="foot"><span class="url">labellaunchsystem.com</span></div>
+  </div>
+  ${kitStage(false)}
+`, KIT3 + `.left h1 { margin-top: auto; margin-bottom: auto; }` + css, 'light');
+Object.assign(CONCEPTS, {
+  // 1. Two lines, centred vertically.
+  m1: () => kit4('<h1 style="font-size:90px">Music in.<br><em>Visuals&nbsp;out.</em></h1>', `.left { width: 520px; } .stage { right: 4px; } .ytc { left: 44px; width: 400px; }`),
+  // 2. Three lines, biggest type.
+  m2: () => kit4('<h1 style="font-size:118px;line-height:.9">Music in.<br><em>Visuals<br>out.</em></h1>'),
+  // 3. Two lines, sitting low just above the URL.
+  m3: () => kit4('<h1 style="font-size:90px;margin-bottom:34px">Music in.<br><em>Visuals&nbsp;out.</em></h1>', `.left { width: 520px; } .left h1 { margin-bottom: 30px; } .stage { right: 4px; } .ytc { left: 44px; width: 400px; }`),
+  // 4. Two lines, the screens scaled down a touch to give the words more room.
+  m4: () => kit4('<h1 style="font-size:100px">Music in.<br><em>Visuals&nbsp;out.</em></h1>', `.left { width: 580px; } .stage { right: 18px; transform: scale(.88); transform-origin: right center; } .ytc { left: 60px; width: 390px; }`),
 });
 
 // One card per case study: the release artwork, the artist and the view count.
