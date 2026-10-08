@@ -20,7 +20,7 @@ Brief, teardown, proof inventory and Umesh's decisions: `E:\Obsidian Vaults\UG B
 - Never commit `.dev.vars`. Push only when Umesh asks (every push to `main` deploys to Cloudflare Pages).
 
 ## Commands
-- `npm run gen` (case pages) · `npm run dev` (port 5180) · `npm run build` · `npm run preview` (port 4180) · `npm run dev:full` (wrangler + Function) · `node scripts/shoot.mjs <dir>` (screenshots)
+- `node scripts/og.mjs` (share cards + icons) · `npm run gen` (case pages) · `npm run dev` (port 5180) · `npm run build` · `npm run preview` (port 4180) · `npm run dev:full` (wrangler + Function) · `node scripts/shoot.mjs <dir>` (screenshots)
 
 ## Structure
 - `index.html` landing · `releases/<slug>/index.html` case studies (8 generated from `src/releases.js` by `scripts/gen-releases.mjs`; `rock-it-out` is handwritten)
@@ -28,3 +28,4 @@ Brief, teardown, proof inventory and Umesh's decisions: `E:\Obsidian Vaults\UG B
 - Repo: github.com/umeshnkg/label-launch-system -> Cloudflare Pages (same method as ughdstudios.com)
 - `functions/api/lead.js` lead form -> ClickUp (custom fields matched by name) + Resend (team copy + confirmation to the lead) + hot/warm/cold lead score; field decisions are in the vault's `lead-form-intake-synthesis.md`, do not add form fields without reading it
 - `public/thumbs` YouTube thumbs · `public/kit` client kit images + Canvas loops · `public/docs` PDFs · `public/hero.mp4` hero loop
+- Share previews: every page carries og:* + twitter:* tags with a 1200x630 JPG card from `public/og/` (homepage `home.jpg`, case pages `<slug>.jpg`). Cards are rendered by `node scripts/og.mjs` (add `--concepts` for all homepage concepts; the live one is `HOME` in that script). Re-run it after changing a case's title, views or poster. Never point og:image at a .webp or a video frame.
