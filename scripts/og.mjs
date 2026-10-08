@@ -17,7 +17,7 @@ const out = path.join(pub, 'og');
 fs.mkdirSync(out, { recursive: true });
 
 // Which concept is the live homepage card.
-const HOME = 'wall';
+const HOME = 'm2';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // Logo file -> height in px, tuned so they read at the same visual weight.
