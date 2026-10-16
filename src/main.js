@@ -650,24 +650,13 @@ if (totop) {
 /* Current year in footer */
 $$('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
 
-/* The Rollout hero (src/rollout/): one 20-second round per real project.
-   Dev view: /?rollout=beat:<notification|directions|preview|delivered> renders
-   the first project with every cue of that beat applied (frozen at its end). */
+/* The Rollout hero (src/rollout/): one 20-second round per real project, in
+   the order ROLLOUT lists them. Dev view: /?rollout=beat:<name> freezes the
+   first project at the end of that beat. */
 import { ROLLOUT } from './rollout.js';
 import { activeProjects } from './rollout/derive.js';
-import { cuesFor, BEATS } from './rollout/timeline.js';
-import { renderProject, applyCue } from './rollout/render.js';
+import { mountRollout } from './rollout/index.js';
 {
   const root = $('[data-rollout]');
-  const m = location.search.match(/rollout=beat:(\w+)/);
-  if (root && m && BEATS[m[1]]) {
-    const [project] = activeProjects(ROLLOUT, { FEATURED, YT_CARDS, REELS });
-    const stage = renderProject(project);
-    root.append(stage);
-    const until = BEATS[m[1]][1];
-    for (const cue of cuesFor(project)) {
-      if (cue.at >= until) break;
-      if (cue.type !== 'video') applyCue(stage, cue);
-    }
-  }
+  if (root) mountRollout(root, { projects: activeProjects(ROLLOUT, { FEATURED, YT_CARDS, REELS }) });
 }
