@@ -2,7 +2,14 @@
 // when the stage is off-screen or the tab is hidden, skips on tap, and falls
 // back to a still for reduced-motion and to posters for save-data visitors.
 import { cuesFor, createRunner, BEATS } from './timeline.js';
-import { renderProject, applyCue } from './render.js';
+import { renderProject, applyCue, hydrate } from './render.js';
+
+/* Later-beat images load after the page's own load event (or at once if it
+   has already fired), so the hero's first paint is never starved by them. */
+function hydrateWhenLoaded(stage) {
+  if (typeof document === 'undefined' || document.readyState === 'complete') { hydrate(stage); return; }
+  window.addEventListener('load', () => hydrate(stage), { once: true });
+}
 
 const prefetched = new Set();
 function prefetch(project, saveData) {
@@ -46,6 +53,7 @@ export function mountRollout(root, {
     if (saveData) stage.dataset.nomp4 = '1';
     root.prepend(stage);
     root.dataset.project = p.slug;
+    hydrateWhenLoaded(stage);
     return stage;
   };
 

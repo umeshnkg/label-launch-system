@@ -67,6 +67,39 @@ export const ROLLOUT = [
     change: { weight: ['500', '800'], swatch: ['#6a3fc0', '#ff5fa2'] },
   } },
 
+  // La Cuerda (CHIP MANTRA, 2023). Off: no public YouTube upload was found on
+  // 2026-10-16, so the card uses a placeholder id and the delivered thumbnail.
+  // Flip `on` and set the real `id` when the video is public. Boards are two
+  // pages of the illustrated storyboard (Storyboard_V2.pdf). No ClickUp task
+  // was found, so the release tag reads "Date set".
+  { on: false, record: {
+    slug: 'la-cuerda', id: 'la-cuerda-lyric', title: 'La Cuerda', artist: 'CHIP MANTRA',
+    thumb: '/kit/rollout/lacuerda-thumb-1.webp',
+    kit: [
+      { type: 'yt', n: 1 },
+      { type: 'pack', ui: 'reels', n: 4, unit: 'cuts', items: [
+        { poster: '/kit/rollout/lacuerda-promo-story-soon.webp', label: 'Story, Coming Soon' },
+        { poster: '/kit/rollout/lacuerda-promo-story-now.webp', label: 'Story, Out Now' },
+        { poster: '/kit/rollout/lacuerda-promo-feed-now.webp', label: 'Feed, Out Now' },
+      ] },
+      { type: 'pack', ui: 'spotify', n: 2, unit: 'versions', items: [
+        { poster: '/kit/rollout/lacuerda-canvas-1.webp', label: 'Canvas' },
+        { poster: '/kit/rollout/lacuerda-canvas-2.webp', label: 'Canvas, title' },
+      ] },
+      { type: 'ab', n: 7, items: ['/kit/rollout/lacuerda-thumb-1.webp', '/kit/rollout/lacuerda-thumb-2.webp', '/kit/rollout/lacuerda-thumb-3.webp'] },
+    ],
+    reel: { account: 'CHIP MANTRA', avatar: '/kit/rollout/lacuerda-canvas-1.webp', caption: 'La Cuerda, out now', audio: 'CHIP MANTRA · La Cuerda' },
+  }, story: {
+    input: 'song', files: ['LaCuerda.wav'],
+    boards: [
+      { img: '/kit/rollout/lacuerda-board-a.webp', palette: ['#111111', '#ffffff', '#e5261f', '#7a7a7a', '#2a2a2a'], source: 'delivery', label: 'Storyboard 1' },
+      { img: '/kit/rollout/lacuerda-board-b.webp', palette: ['#111111', '#e5261f', '#ffffff', '#2a2a2a', '#7a7a7a'], source: 'delivery', label: 'Storyboard 2' },
+    ],
+    preview: { video: '/kit/rollout/lacuerda-preview.mp4', poster: '/kit/rollout/lacuerda-preview.webp' },
+    note: 'Perfect. One more frame with the whale?', noteSource: 'illustrative',
+    change: { weight: ['500', '800'], swatch: ['#ffffff', '#e5261f'] },
+  } },
+
   // Bio Dad (Riki Lindhome). Animated lyric video delivered 2026-05-27 with the
   // cover, 7 thumbnails, 2 teasers, 3 trailers and 3 Out Now clips. The lyric
   // video is not on her channel yet (2026-10-16; her live-action comedy video
@@ -99,39 +132,6 @@ export const ROLLOUT = [
     preview: { video: '/kit/rollout/biodad-preview.mp4', poster: '/kit/rollout/biodad-preview.webp' },
     note: 'This is great. Could the stork look a little more worried?', noteSource: 'illustrative',
     change: { weight: ['500', '800'], swatch: ['#f5d36b', '#d7262f'] },
-  } },
-
-  // La Cuerda (CHIP MANTRA, 2023). Off: no public YouTube upload was found on
-  // 2026-10-16, so the card uses a placeholder id and the delivered thumbnail.
-  // Flip `on` and set the real `id` when the video is public. Boards are two
-  // pages of the illustrated storyboard (Storyboard_V2.pdf). No ClickUp task
-  // was found, so the release tag reads "Date set".
-  { on: false, record: {
-    slug: 'la-cuerda', id: 'la-cuerda-lyric', title: 'La Cuerda', artist: 'CHIP MANTRA',
-    thumb: '/kit/rollout/lacuerda-thumb-1.webp',
-    kit: [
-      { type: 'yt', n: 1 },
-      { type: 'pack', ui: 'reels', n: 4, unit: 'cuts', items: [
-        { poster: '/kit/rollout/lacuerda-promo-story-soon.webp', label: 'Story, Coming Soon' },
-        { poster: '/kit/rollout/lacuerda-promo-story-now.webp', label: 'Story, Out Now' },
-        { poster: '/kit/rollout/lacuerda-promo-feed-now.webp', label: 'Feed, Out Now' },
-      ] },
-      { type: 'pack', ui: 'spotify', n: 2, unit: 'versions', items: [
-        { poster: '/kit/rollout/lacuerda-canvas-1.webp', label: 'Canvas' },
-        { poster: '/kit/rollout/lacuerda-canvas-2.webp', label: 'Canvas, title' },
-      ] },
-      { type: 'ab', n: 7, items: ['/kit/rollout/lacuerda-thumb-1.webp', '/kit/rollout/lacuerda-thumb-2.webp', '/kit/rollout/lacuerda-thumb-3.webp'] },
-    ],
-    reel: { account: 'CHIP MANTRA', avatar: '/kit/rollout/lacuerda-canvas-1.webp', caption: 'La Cuerda, out now', audio: 'CHIP MANTRA · La Cuerda' },
-  }, story: {
-    input: 'song', files: ['LaCuerda.wav'],
-    boards: [
-      { img: '/kit/rollout/lacuerda-board-a.webp', palette: ['#111111', '#ffffff', '#e5261f', '#7a7a7a', '#2a2a2a'], source: 'delivery', label: 'Storyboard 1' },
-      { img: '/kit/rollout/lacuerda-board-b.webp', palette: ['#111111', '#e5261f', '#ffffff', '#2a2a2a', '#7a7a7a'], source: 'delivery', label: 'Storyboard 2' },
-    ],
-    preview: { video: '/kit/rollout/lacuerda-preview.mp4', poster: '/kit/rollout/lacuerda-preview.webp' },
-    note: 'Perfect. One more frame with the whale?', noteSource: 'illustrative',
-    change: { weight: ['500', '800'], swatch: ['#ffffff', '#e5261f'] },
   } },
 
   // I'M FREE (J McAllister, AI animation, 2025). Off: the ClickUp order is "on

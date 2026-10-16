@@ -16,7 +16,18 @@ const BADGES = {
 export const badge = (kind) => `<span class="rl-bg rl-bg--${kind}" aria-hidden="true">${BADGES[kind] || ''}</span>`;
 
 const WAVE = '<span class="rl-ntf__wave">' + [4, 10, 7, 14, 5, 9, 4].map((h) => `<b style="--h:${h}"></b>`).join('') + '</span>';
+// Beat 1's images load with the page. Everything later carries data-src and is
+// hydrated by the mount after the page's load event, so the stage never
+// competes with the hero's own paint on a slow connection.
 const img = (src, cls = '') => `<img src="${src}" alt="" ${cls ? `class="${cls}"` : ''} loading="eager" decoding="async" />`;
+const lazy = (src, cls = '') => `<img data-src="${src}" alt="" ${cls ? `class="${cls}"` : ''} decoding="async" fetchpriority="low" />`;
+
+/* Give every deferred image (and the preview's poster) its real source. */
+export function hydrate(stage) {
+  stage.querySelectorAll('img[data-src]').forEach((i) => { i.src = i.dataset.src; i.removeAttribute('data-src'); });
+  const v = stage.querySelector('video[data-poster]');
+  if (v) { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); }
+}
 
 function notification(n) {
   const icon = n.icon || { kind: 'song', images: [], count: null };
@@ -38,7 +49,7 @@ function boards(list, pick) {
   const n = list.length;
   return `<div class="rl-boards" style="--n:${n}">${list.map((b, i) => `
     <div class="rl-board" data-i="${i}" style="--i:${i}">
-      ${img(b.img)}
+      ${lazy(b.img)}
       ${b.label ? `<span class="rl-board__nm">${esc(b.label)}</span>` : ''}
       <span class="rl-chk" aria-hidden="true">✓</span>
       <span class="rl-board__pal">${(b.palette || []).map((c) => `<i style="background:${esc(c)}"></i>`).join('')}</span>
@@ -52,8 +63,8 @@ function preview(p) {
   return `<div class="rl-preview">
     <div class="rl-preview__col">
       <div class="rl-preview__scr">
-        <video muted playsinline preload="none" data-src="${p.preview.video}" poster="${p.preview.poster}"></video>
-        ${img(p.preview.poster, 'rl-preview__poster')}
+        <video muted playsinline preload="none" data-src="${p.preview.video}" data-poster="${p.preview.poster}"></video>
+        ${lazy(p.preview.poster, 'rl-preview__poster')}
         <span class="rl-preview__lb">30-second preview</span>
         <span class="rl-preview__v2">v2</span>
         <span class="rl-pin"></span>
@@ -73,14 +84,14 @@ function kit(p) {
   let ti = 0;
   const tile = (cls, inner) => `<div class="rl-tile ${cls}" data-t="${ti++}">${inner}</div>`;
   const ytc = tile('rl-ytc', `
-      <div class="rl-ytc__th">${img(p.thumb)}${badge('youtube')}</div>
-      <div class="rl-ytc__meta">${p.avatar ? img(p.avatar, 'rl-ytc__av') : ''}<span><b>${esc(p.ytTitle)}</b><em>${esc(p.channel)}</em></span></div>`);
-  const reelsHtml = t.reels.map((r, i) => tile(`rl-phone phone--reel rl-phone--${i}`, `${img(r.poster)}${reelsOverlay(t.reel)}${badge(r.badge)}`)).join('');
+      <div class="rl-ytc__th">${lazy(p.thumb)}${badge('youtube')}</div>
+      <div class="rl-ytc__meta">${p.avatar ? lazy(p.avatar, 'rl-ytc__av') : ''}<span><b>${esc(p.ytTitle)}</b><em>${esc(p.channel)}</em></span></div>`);
+  const reelsHtml = t.reels.map((r, i) => tile(`rl-phone phone--reel rl-phone--${i}`, `${lazy(r.poster)}${reelsOverlay(t.reel)}${badge(r.badge)}`)).join('');
   const vertHtml = t.verticals.map((v, i) => v.kind === 'motion'
-    ? tile(`rl-phone phone--apple rl-phone--${i}`, `${img(v.poster, 'rl-phone__art')}${appleOverlay({ title: p.title, artist: p.artist })}${badge(v.badge)}`)
-    : tile(`rl-phone phone--canvas rl-phone--${i}`, `${img(v.poster)}${spotifyOverlay({ title: p.title, artist: p.artist })}${badge(v.badge)}`)).join('');
-  const thumbsHtml = t.thumbs.length ? tile('rl-thumbs', t.thumbs.map((s, i) => img(s, `rl-thumbs__i rl-thumbs__i--${i}`)).join('') + badge('youtube')) : '';
-  const bnrHtml = t.banner ? tile('rl-bnr', `${img(t.banner)}${badge('youtube')}`) : '';
+    ? tile(`rl-phone phone--apple rl-phone--${i}`, `${lazy(v.poster, 'rl-phone__art')}${appleOverlay({ title: p.title, artist: p.artist })}${badge(v.badge)}`)
+    : tile(`rl-phone phone--canvas rl-phone--${i}`, `${lazy(v.poster)}${spotifyOverlay({ title: p.title, artist: p.artist })}${badge(v.badge)}`)).join('');
+  const thumbsHtml = t.thumbs.length ? tile('rl-thumbs', t.thumbs.map((s, i) => lazy(s, `rl-thumbs__i rl-thumbs__i--${i}`)).join('') + badge('youtube')) : '';
+  const bnrHtml = t.banner ? tile('rl-bnr', `${lazy(t.banner)}${badge('youtube')}`) : '';
   const motion = t.verticals.some((v) => v.kind === 'motion');
   return `<div class="rl-kit">
     ${ytc}

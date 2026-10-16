@@ -1,5 +1,9 @@
 // Check the Rollout hero in a real browser and screenshot every beat.
-// Usage: node scripts/shoot-rollout.mjs [beats|behaviour|all]   (default: all)
+// Usage: node scripts/shoot-rollout.mjs [beats|behaviour|all|fallback|lcp]   (default: all)
+//   fallback  renders the delivered frame of project 1 at 2x into public/kit/rollout/fallback.webp
+//             (the no-JS image) and checks it shows with JavaScript off.
+//   lcp       prints the largest-contentful-paint time and element at 360 x 667 on a slow phone
+//             profile; set LLS_DIST_ROOT=<other checkout> to measure another build (the main baseline).
 // Needs a built dist/ (npm run build) and Edge or Chrome installed.
 // Exits 1 on any console error, failed request or failed assertion.
 import { spawn } from 'node:child_process';
@@ -16,7 +20,8 @@ const mode = process.argv[2] || 'all';
 const BASE = 'http://127.0.0.1:4180';
 
 const vite = path.join(root, 'node_modules', 'vite', 'bin', 'vite.js');
-const srv = spawn(process.execPath, [vite, 'preview', '--port', '4180', '--strictPort', '--host', '127.0.0.1'], { cwd: root, stdio: 'ignore' });
+const serveRoot = process.env.LLS_DIST_ROOT ? path.resolve(process.env.LLS_DIST_ROOT) : root;
+const srv = spawn(process.execPath, [vite, 'preview', '--port', '4180', '--strictPort', '--host', '127.0.0.1'], { cwd: serveRoot, stdio: 'ignore' });
 const waitPort = () => new Promise((resolve) => {
   const t = setInterval(() => {
     const s = net.connect(4180, '127.0.0.1');
@@ -210,12 +215,56 @@ async function behaviour(b) {
   await page.close();
 }
 
+async function fallback(b) {
+  const page = await newPage(b);
+  await page.setViewport({ width: 1120, height: 800, deviceScaleFactor: 2 });
+  await page.goto(`${BASE}/?rollout=beat:delivered&p=0`, { waitUntil: 'networkidle0', timeout: 60000 });
+  await page.waitForSelector('.rl[data-beat="delivered"]', { timeout: 8000 });
+  await sleep(1200);
+  const rl = await page.$('.rl');
+  const file = path.join(root, 'public', 'kit', 'rollout', 'fallback.webp');
+  await rl.screenshot({ path: file, type: 'webp', quality: 82 });
+  console.log(`fallback -> ${path.relative(root, file)} ${(fs.statSync(file).size / 1024).toFixed(0)} KB`);
+  // With JavaScript off the <noscript> image must show (served from the build, so copy it into dist too).
+  fs.mkdirSync(path.join(root, 'dist', 'kit', 'rollout'), { recursive: true });
+  fs.copyFileSync(file, path.join(root, 'dist', 'kit', 'rollout', 'fallback.webp'));
+  const p2 = await newPage(b);
+  await p2.setJavaScriptEnabled(false);
+  await p2.setViewport({ width: 1280, height: 800 });
+  await p2.goto(`${BASE}/`, { waitUntil: 'networkidle0', timeout: 60000 });
+  const shown = await p2.evaluate(() => { const i = document.querySelector('[data-rollout] img'); return i ? { w: i.naturalWidth, h: i.getBoundingClientRect().height } : null; });
+  check(shown && shown.w > 0 && shown.h > 100, `fallback: no-JS image not shown (${JSON.stringify(shown)})`);
+  await p2.close();
+  await page.close();
+}
+
+async function lcp(b) {
+  const page = await newPage(b);
+  await page.evaluateOnNewDocument(() => {
+    window.__lcp = [];
+    new PerformanceObserver((l) => { for (const e of l.getEntries()) window.__lcp.push({ t: e.startTime, el: e.element ? e.element.tagName + (e.element.className ? '.' + String(e.element.className).split(' ')[0] : '') : '?', size: e.size }); }).observe({ type: 'largest-contentful-paint', buffered: true });
+  });
+  await page.setViewport({ width: 360, height: 667, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const cdp = await page.createCDPSession();
+  await cdp.send('Network.enable');
+  await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 });
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+  await page.goto(`${BASE}/`, { waitUntil: 'load', timeout: 120000 });
+  await sleep(6000);
+  const entries = await page.evaluate(() => window.__lcp);
+  const last = entries.at(-1);
+  console.log(`lcp ${serveRoot === root ? 'branch' : 'main'}: ${last ? `${Math.round(last.t)} ms on ${last.el}` : 'no entry'}  (${entries.map((e) => `${Math.round(e.t)}:${e.el}`).join(' > ')})`);
+  await page.close();
+}
+
 (async () => {
   await waitPort();
   const exe = browsers.find((p) => fs.existsSync(p));
   const b = await puppeteer.launch({ executablePath: exe, headless: true, args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] });
   if (mode === 'beats' || mode === 'all') await beats(b);
   if (mode === 'behaviour' || mode === 'all') await behaviour(b);
+  if (mode === 'fallback') await fallback(b);
+  if (mode === 'lcp') await lcp(b);
   await b.close();
   srv.kill();
   if (errors.length) failures.push('browser errors: ' + JSON.stringify(errors));
