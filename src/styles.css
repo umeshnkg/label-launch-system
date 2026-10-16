@@ -10,6 +10,7 @@
   --card-2: #ededf0;
   --accent: #e5261f;
   --accent-soft: #fdecea;
+  --mark: #fff0a1; /* hero quote highlighter; the one yellow on the site */
   --on-accent: #ffffff;
   --ok: #16a34a;
   --radius: 18px;
@@ -116,30 +117,47 @@ em { font-style: italic; font-weight: 500; }
 .hero .lede { margin: 22px auto 0; max-width: 680px; text-wrap: pretty; }
 .nobr { white-space: nowrap; }
 .hero__cta { display: flex; gap: 12px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
-/* Proof row: two cards with one anatomy (small caps eyebrow, then content),
-   same height, together no wider than the lede above them. */
-.proof {
-  display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 12px;
-  max-width: 720px; margin: 34px auto 0; text-align: left;
-}
-.proof__card {
-  display: flex; flex-direction: column; justify-content: center; gap: 10px; margin: 0;
-  padding: 16px 20px; border-radius: 16px; background: #fff; border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-}
-.proof__eyebrow { display: flex; align-items: center; gap: 8px; font-size: 11px; line-height: 1.2; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
-.proof__logos { display: flex; align-items: center; gap: 24px; height: 38px; }
-/* Same white-on-transparent logo art as the marquee; darkened to ink grey. */
-.proof__logos img { height: calc(var(--h) * 1px); width: auto; filter: brightness(0.3); }
-/* Rotating quote. Quotes stay two lines or less (keep HERO_QUOTES short);
-   all items share one grid cell, so the card holds its height between them. */
-.hq { display: grid; }
-.hq__item { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 10px; opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility 0s linear .45s; }
-.hq__item.is-on { opacity: 1; visibility: visible; transition: opacity .45s ease .1s, visibility 0s; }
-.hq__item q { display: block; quotes: '“' '”'; font-size: 15px; line-height: 1.4; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); text-wrap: pretty; }
-.hq__who { font-size: 12.5px; line-height: 1.35; color: var(--muted); }
-.hq__who strong { color: var(--ink); font-weight: 650; }
-.hq__stars { color: #f5a623; letter-spacing: 1px; margin-right: 6px; }
+/* Proof: the quote stack alone, centred under the buttons, no wider than a
+   message should be. The "10+ years with labels" card came out on 2026-10-17
+   (too much in the hero; markup in git history); the logo marquee below
+   carries the labels. */
+.proof { display: grid; grid-template-columns: minmax(0, 460px); justify-content: center; max-width: 720px; margin: 34px auto 0; text-align: left; }
+/* Hero quote stack: three messages, the top one readable, two peeking below.
+   The highlighter is --mark (yellow): Umesh's call on 2026-10-17, the one
+   exception to the no-yellow rule. Motion lives in main.js; these classes are
+   its states (is-enter, is-dragging, is-out, is-out--fade). */
+.hq { margin: 0; min-width: 0; }
+.hq__stack { position: relative; display: grid; padding-bottom: 24px; touch-action: pan-y; }
+.hq__msg { grid-area: 1 / 1; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow-sm); padding: 12px 14px 13px; display: grid; gap: 8px; transform-origin: 50% 100%; user-select: none; -webkit-user-select: none; transition: transform .4s cubic-bezier(.2, .7, .2, 1), opacity .3s ease, background-color .3s ease; will-change: transform; }
+.hq__msg--1 { z-index: 3; cursor: grab; }
+.hq__msg--2 { transform: translateY(13px) scale(.96); background: #fcfcfd; z-index: 2; }
+.hq__msg--3 { transform: translateY(24px) scale(.92); background: #f7f7f9; z-index: 1; }
+.hq__msg.is-enter { transform: translateY(34px) scale(.88); opacity: 0; }
+.hq__msg.is-dragging { transition: none; cursor: grabbing; }
+.hq__msg.is-out { transition: transform .32s ease-in, opacity .26s ease-in; pointer-events: none; }
+.hq__msg.is-out--fade { transition: transform .42s ease, opacity .38s ease; }
+.hq__msg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hq__body { margin: 0; line-height: 1.38; font-weight: 500; color: var(--ink); text-wrap: pretty; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; transition: opacity .3s ease .1s; }
+.hq__body.is-short { text-wrap: balance; }
+.hq__msg--2 .hq__body, .hq__msg--3 .hq__body { opacity: 0; transition: none; }
+.hq__hd { display: flex; align-items: center; gap: 9px; }
+.hq__ava { position: relative; display: inline-grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--card-2); color: var(--ink-2); font-size: 11px; font-weight: 700; letter-spacing: .02em; }
+/* Google reviews: the G badge on the avatar. */
+.hq__ava--g::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 1.5px #fff; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.3-.4-3.5z'/%3E%3Cpath fill='%23FF3D00' d='M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z'/%3E%3Cpath fill='%234CAF50' d='M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z'/%3E%3Cpath fill='%231976D2' d='M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.3-.4-3.5z'/%3E%3C/svg%3E") center / 10px no-repeat; }
+.hq__meta { display: grid; min-width: 0; flex: 1; gap: 1px; }
+.hq__l1, .hq__l2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.hq__l1 { font-size: 13px; line-height: 1.3; color: var(--ink); }
+.hq__nm { font-weight: 650; }
+.hq__rl { color: var(--muted); font-weight: 400; }
+.hq__l2row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.hq__l2 { flex: 1; font-size: 12px; line-height: 1.3; color: var(--ink); }
+.hq__org { font-weight: 700; }
+.hq__rl2 { color: var(--muted); font-weight: 500; }
+.hq__when { flex: none; font-size: 11px; color: var(--faint); white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
+.hq__when svg { width: 12px; height: 12px; }
+.hq__stars { color: #f5a623; letter-spacing: 1px; }
+.hq mark { background: var(--mark); color: var(--ink); padding: .03em .28em; margin: 0 -.06em; border-radius: .3em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+@media (prefers-reduced-motion: reduce) { .hq__msg, .hq__body { transition: none; } }
 .hero__media { margin: 54px auto 0; max-width: 980px; }
 .frame {
   position: relative; border-radius: var(--radius-lg); overflow: hidden; background: #000;
@@ -521,7 +539,6 @@ em { font-style: italic; font-weight: 500; }
   .quotes { columns: 1; }
   .timeline, .statgrid { grid-template-columns: 1fr 1fr; }
   .proof { grid-template-columns: 1fr; }
-  .proof__logos { gap: 18px; }
   .btn { width: 100%; }
   .hero__cta .btn { width: auto; flex: 1 1 auto; }
   .nav .btn { width: auto; }

@@ -12,36 +12,115 @@ import { esc, spotifyOverlay, reelsOverlay, appleOverlay } from './overlays.js';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
-/* Hero quote card: fades through HERO_QUOTES, holding each one long enough
-   to read. Pauses on hover/focus and while the tab is hidden; with reduced
-   motion it stays on the first quote. */
-const heroQuotes = $('[data-hero-quotes] .hq');
-if (heroQuotes) {
-  heroQuotes.innerHTML = HERO_QUOTES.map((t, i) => `
-    <div class="hq__item${i === 0 ? ' is-on' : ''}"${i === 0 ? '' : ' aria-hidden="true"'}>
-      <q>${esc(t.q)}</q>
-      <span class="hq__who">${t.google ? '<span class="hq__stars" aria-label="5 stars on Google">★★★★★</span>' : ''}<strong>${esc(t.name)}</strong>${t.role ? `, ${esc(t.role)}` : ''}</span>
-    </div>`).join('');
+/* Hero quote stack: three messages drawn like an inbox, the top one readable
+   and two peeking out below. On its own it crossfades to the next one (hold
+   scales with length; waits while hovered or while the tab is hidden). The top
+   message can be dragged: a sideways swipe (or ← → with it focused) flings it
+   off and the next rises from the pile; up or down springs back. Vertical
+   finger moves still scroll the page (touch-action: pan-y). Reduced motion:
+   no autoplay and no transitions; the swipe still works. */
+const heroQuotes = $('[data-hero-quotes]');
+if (heroQuotes && HERO_QUOTES.length >= 3) {
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const N = HERO_QUOTES.length;
+  const text = (t) => t.q.replace(/<\/?m>/g, '');
+  const marked = (t) => esc(t.q).replace(/&lt;m&gt;/g, '<mark>').replace(/&lt;\/m&gt;/g, '</mark>');
+  const initials = (n) => n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+  const size = (t) => { const n = text(t).length; return n <= 25 ? 18 : n <= 44 ? 16 : 14.5; };
+  // Two lines, always: name (role) / company, or name / role.
+  const who = (t) => {
+    const nameHl = t.hl === 'name' || t.hl === 'name+org';
+    const nm = nameHl ? `<mark class="hq__nm">${esc(t.name)}</mark>` : `<span class="hq__nm">${esc(t.name)}</span>`;
+    if (t.org) {
+      const orgHl = t.hl === 'org' || t.hl === 'name+org';
+      const org = orgHl ? `<mark class="hq__org">${esc(t.org)}</mark>` : `<span class="hq__org">${esc(t.org)}</span>`;
+      return { l1: nm + (t.role ? ` <span class="hq__rl">(${esc(t.role)})</span>` : ''), l2: org };
+    }
+    const role = esc(t.role || 'Artist');
+    return { l1: nm, l2: t.hl === 'role' ? `<mark class="hq__org">${role}</mark>` : `<span class="hq__rl2">${role}</span>` };
+  };
+  // Right of line two: stars for Google, the envelope (and a date once verified) for email, nothing for Instagram.
+  const side = (t) => t.src === 'google' ? '<span class="hq__when hq__stars" aria-label="5 stars on Google">★★★★★</span>'
+    : t.src === 'email' ? `<span class="hq__when" aria-label="By email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5 12 13l8.5-5.5"/></svg>${t.date ? esc(t.date) : ''}</span>`
+    : '';
+  const html = (t) => {
+    const w = who(t), n = text(t).length;
+    return `<div class="hq__hd"><span class="hq__ava${t.src === 'google' ? ' hq__ava--g' : ''}" aria-hidden="true">${initials(t.name)}</span><div class="hq__meta"><div class="hq__l1">${w.l1}</div><div class="hq__l2row"><div class="hq__l2">${w.l2}</div>${side(t)}</div></div></div><p class="hq__body${n <= 60 ? ' is-short' : ''}" style="font-size:${size(t)}px">${marked(t)}</p>`;
+  };
 
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const items = $$('.hq__item', heroQuotes);
-    const card = heroQuotes.parentElement;
-    let i = 0, paused = false, timer;
-    const hold = (t) => Math.min(3500 + t.q.length * 45, 9000);
-    const next = () => {
-      if (!paused && !document.hidden) {
-        items[i].classList.remove('is-on');
-        items[i].setAttribute('aria-hidden', 'true');
-        i = (i + 1) % items.length;
-        items[i].classList.add('is-on');
-        items[i].removeAttribute('aria-hidden');
-      }
-      timer = setTimeout(next, hold(HERO_QUOTES[i]));
-    };
-    timer = setTimeout(next, hold(HERO_QUOTES[0]));
-    card.addEventListener('mouseenter', () => { paused = true; });
-    card.addEventListener('mouseleave', () => { paused = false; });
+  const stack = document.createElement('div');
+  stack.className = 'hq__stack';
+  heroQuotes.appendChild(stack);
+  let i = 0, timer, busy = false, hover = false;
+  const hold = (t) => Math.min(4200 + text(t).length * 42, 8500);
+  const make = (k, depth) => {
+    const d = document.createElement('div');
+    d.className = `hq__msg hq__msg--${depth}`;
+    if (depth > 1) d.setAttribute('aria-hidden', 'true');
+    d.innerHTML = html(HERO_QUOTES[k % N]);
+    return d;
+  };
+  const top = () => stack.lastElementChild;
+  const schedule = () => {
+    clearTimeout(timer);
+    if (reduced) return;
+    timer = setTimeout(() => { if (!hover && !document.hidden) advance(0); else schedule(); }, hold(HERO_QUOTES[i]));
+  };
+  // dir 0 = fade out in place (the timer); -1 / +1 = fling sideways (a swipe or an arrow key).
+  function advance(dir, dy = 0) {
+    if (busy) return;
+    busy = true; clearTimeout(timer);
+    const t = top(); const hadFocus = document.activeElement === t;
+    t.classList.remove('is-dragging'); t.classList.add('is-out');
+    if (dir === 0) { t.classList.add('is-out--fade'); t.style.transform = 'scale(.97)'; }
+    else t.style.transform = `translate(${dir * (stack.offsetWidth + 140)}px, ${dy}px) rotate(${dir * 14}deg)`;
+    t.style.opacity = '0';
+    i = (i + 1) % N;
+    const n = make(i + 2, 3); n.classList.add('is-enter'); stack.prepend(n);
+    requestAnimationFrame(() => requestAnimationFrame(() => n.classList.remove('is-enter')));
+    const [, c3, c2] = stack.children;
+    c3.classList.replace('hq__msg--3', 'hq__msg--2');
+    c2.classList.replace('hq__msg--2', 'hq__msg--1'); c2.removeAttribute('aria-hidden');
+    setTimeout(() => { t.remove(); bind(top()); if (hadFocus) top().focus(); busy = false; schedule(); }, reduced ? 0 : (dir === 0 ? 420 : 340));
   }
+  function bind(card) {
+    card.tabIndex = 0;
+    card.setAttribute('role', 'group');
+    card.setAttribute('aria-roledescription', 'message, swipe left or right for the next');
+    let sx = 0, sy = 0, dx = 0, dy = 0, t0 = 0, active = false, pid = null;
+    card.addEventListener('pointerdown', (e) => {
+      if (busy || e.button) return;
+      active = true; pid = e.pointerId; sx = e.clientX; sy = e.clientY; dx = dy = 0; t0 = performance.now();
+      try { card.setPointerCapture(pid); } catch (_) { /* pointer already gone */ }
+      card.classList.add('is-dragging'); clearTimeout(timer);
+    });
+    card.addEventListener('pointermove', (e) => {
+      if (!active || e.pointerId !== pid) return;
+      dx = e.clientX - sx; dy = e.clientY - sy;
+      const give = Math.sign(dy) * Math.min(Math.abs(dy) * 0.3, 36);
+      card.style.transform = `translate(${dx}px, ${give}px) rotate(${dx * 0.04}deg)`;
+      card.style.opacity = String(Math.max(0.35, 1 - Math.abs(dx) / (card.offsetWidth * 1.15)));
+    });
+    const end = (e) => {
+      if (!active || e.pointerId !== pid) return;
+      active = false; card.classList.remove('is-dragging');
+      const w = card.offsetWidth, v = Math.abs(dx) / Math.max(1, performance.now() - t0);
+      const fling = e.type === 'pointerup' && (Math.abs(dx) > w * 0.35 || (v > 0.65 && Math.abs(dx) > 28));
+      if (fling) advance(Math.sign(dx) || -1, Math.sign(dy) * Math.min(Math.abs(dy) * 0.3, 36));
+      else { card.style.transform = ''; card.style.opacity = ''; schedule(); }
+    };
+    card.addEventListener('pointerup', end);
+    card.addEventListener('pointercancel', end);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); advance(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); advance(1); }
+    });
+  }
+  stack.append(make(i + 2, 3), make(i + 1, 2), make(i, 1));
+  bind(top());
+  heroQuotes.addEventListener('mouseenter', () => { hover = true; });
+  heroQuotes.addEventListener('mouseleave', () => { hover = false; });
+  schedule();
 }
 
 /* Logo marquee: content is doubled so the loop is seamless. Scrolled from JS

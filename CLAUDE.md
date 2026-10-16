@@ -6,7 +6,8 @@ Landing page for labellaunchsystem.com. Vite static multipage, vanilla JS, Cloud
 Build history, teardown, proof inventory and earlier decisions: `E:\Obsidian Vaults\UG Brain\plan\label-launch-system-site\00-fastlane-teardown-and-site-brief.md`. Read it before changing copy or packages.
 
 ## Rules
-- One accent colour: change `--accent` in `src/styles.css`, nothing else. No yellow on this site.
+- One accent colour: change `--accent` in `src/styles.css`, nothing else. No yellow on this site, with one exception: the hero quote highlighter (`--mark`, Umesh's call 2026-10-17).
+- **Hero quotes** are a stack of three messages drawn like an inbox (`[data-hero-quotes]` in `index.html`; data `HERO_QUOTES` in `src/data.js`; code at the top of `src/main.js`; styles `.hq*`). Quotes stay verbatim, with `<m>…</m>` around the phrase the highlighter marks. Attribution is always two lines: name (role) over the company, or name over the role ("Artist" / "Major artist"); `hl` picks the highlighted part (the company; the name when the reviewer is the company or a famous name; `role` for a credential like "2x Grammy-nominated artist"). `src: 'google'` only for reviews live on the Google profile (stars); email gets the envelope (plus `date` once verified in Gmail); Instagram gets no marker. Autoplay crossfades; a sideways swipe or ← → flings the top one. No hint text. The "10+ years with labels" card is out of the hero since 2026-10-17 (markup in git history); the logo marquee carries the labels. Fitz Madison quotes stay out.
 - Copy: no em dashes, no "Kind regards", the DIY product is "Make Lyric Video", big names are "has worked with".
 - Every number (views, counts, prices) must be traceable to the brief. Views come from yt-dlp, not memory.
 - Only work confirmed in the Dropbox deliveries folder goes in `FEATURED` (src/releases.js) or `LYRIC_VIDEOS` (src/data.js).

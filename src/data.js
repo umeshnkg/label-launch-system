@@ -157,49 +157,55 @@ export const QUOTES = [
   { quote: 'Always a good partner!', name: 'Karin Wir', role: 'Beat Dealer Records', source: 'Google review', stars: 5 },
 ];
 
-// Hero rotating quote card. Verbatim from emails, DMs and Google reviews
-// (… marks a cut inside one message). google: true only for reviews still
-// live on the Google profile; those get the star row. Order is rotation
-// order: label and industry voices first, since a visitor sees three or four.
+// Hero quote stack. Verbatim from emails, DMs and Google reviews (… marks a cut
+// inside one message); <m>…</m> wraps the phrase the highlighter marks.
+// Attribution is always two lines: name (role) over org when there is one,
+// otherwise name over role ("Artist", or "Major artist" for a famous name).
+// hl = which part is highlighted: 'org' (the label or company), 'name' (the
+// reviewer is the company or the famous name), 'name+org' (name plus credit
+// line), 'role' (the credential). Plain artists get no attribution highlight.
+// src: 'google' only for reviews still live on the Google profile (they get the
+// stars); 'email' shows the envelope; 'instagram' shows nothing on the right.
+// date (optional, e.g. 'Mar 2025') prints next to the envelope once verified in Gmail.
+// Order is rotation order: label and industry voices first. The Fitz Madison
+// side (Ken Steorts, Margo Fitzgerald) is out: that partnership ended 2026-10-05.
 // Source notes: UG Brain/plan/label-launch-system-site/hero-quotes.md
 export const HERO_QUOTES = [
-  { q: 'Umesh is our amazing video content creator partner for Fitz Madison (and soon others).', name: 'Ken Steorts', role: 'Co-founder of Skillet · CEO, Madison Line Records' },
-  { q: 'You guys really out did yourselves … my competitors will begin reaching out to you guys.', name: 'Divinity Roxx', role: '2x Grammy-nominated artist' },
-  { q: 'Our team watched the video and we all think it’s amazing! We really love it!', name: 'Karin Wir', role: 'Product & Artist Manager, Beat Dealer Records' },
-  { q: 'Next time we have something, I know who my first address is ;)', name: 'Till Mintye', role: 'Artist Management, Madnesstic Media' },
-  { q: 'It is utterly fantastic!! … Could not be more happy.', name: 'Richard Kraft', role: 'Kraft Engel Management, Los Angeles' },
-  { q: 'You have made them great with this video. It is a work of art!', name: 'Jack Tempchin', role: 'Songwriter, “Peaceful Easy Feeling” (Eagles)' },
-  { q: 'His quality and creativity are the best you can get!', name: 'TYRA', role: 'Artist', google: true },
-  { q: 'Your team has done a masterful job in creating interest in Fitz and his friends.', name: 'Margo Fitzgerald', role: 'Co-creator, Fitz Madison' },
-  { q: 'Today the song got added to Spotify’s biggest new dance playlist.', name: 'Studio One Agency', role: 'Artist management' },
-  { q: 'Has plenty of ideas for dynamic and appealing visuals, which help retain audience attention.', name: '91 Sound Studios', role: 'Recording studio', google: true },
-  { q: 'Just watched the video!!! It’s really great.', name: '21 Savage', role: 'Artist' },
-  { q: 'He communicated quickly and delivered our video in the time he said he would.', name: 'Jason Jennings', role: 'Artist', google: true },
-  { q: 'You have done every lyric video for me for years!', name: 'Melissa Bailey', role: 'Singer-songwriter' },
-  { q: 'Will DEFINITELY recommend you to others!', name: 'Richard Kraft', role: 'Kraft Engel Management, Los Angeles' },
-  { q: 'Yeah, I think it’s my best one so far. I’m really happy with it.', name: 'JVKE', role: 'Artist' },
-  { q: 'Wow. … You are A1, top-tier talent.', name: 'Lamontt Blackshire', role: 'Music producer' },
-  { q: 'The lyric video for “LUNAX x CERES - Paradise” … which we really loved.', name: 'Natalie Foerster', role: 'Beat Dealer Records' },
-  { q: 'Oh my gosh this is amazing!!! You went so above and beyond and it’s just wonderful!!', name: 'Riki Lindhome', role: 'Actor, comedian and artist' },
-  { q: 'They really listened to my ideas and helped bring the visuals I had in my head to life.', name: 'Yvonne Kidd', role: 'Artist', google: true },
-  { q: 'Its soooooo good! I’m getting so much great feedback!', name: 'Divinity Roxx', role: '2x Grammy-nominated artist' },
-  { q: 'My opinion in three words: stunning, stunning and stunning.', name: 'John Stea', role: 'Songwriter' },
-  { q: 'Great work. We love it.', name: 'David Wessel', role: 'Manager, HBz' },
-  { q: 'The end result was professional and high quality.', name: 'Philip Paulsen', role: 'Artist', google: true },
-  { q: 'If I hear about anyone needing your services, I’ll send them your way!', name: 'Margo Fitzgerald', role: 'Co-creator, Fitz Madison' },
-  { q: 'He really brought my song to life and delivered an impeccable visual display.', name: 'Johnny Vitulli', role: 'Artist', google: true },
-  { q: 'Everyone in my circle is completely ecstatic about the recent production of “Ask Your Phone”!', name: 'Robert Benedict', role: 'Artist' },
-  { q: 'We need you again :)', name: 'Till Mintye', role: 'Artist Management, Madnesstic Media' },
-  { q: 'Honestly I’m still amazed of this lyric video! It’s just so amazing.', name: 'Jay Ray', role: 'Artist' },
-  { q: 'Very easy to work with! I definitely recommend!', name: 'Lost Soul Productions', role: 'Production company', google: true },
-  { q: 'Everyone I’ve shown the lyric video to flips over it!!', name: 'Brewster Bee', role: 'Artist' },
-  { q: 'Umesh! SOLID MAN! You do great work! … I know we will be doing more business!', name: 'Lamontt Blackshire', role: 'Music producer' },
-  { q: 'You’re definitely going to be my good to go guy for this sort of thing moving forward', name: 'Joe Bermudez', role: 'DJ' },
-  { q: 'Seriously, the video is beautifully done and beyond my expectations.', name: 'John Stea', role: 'Songwriter' },
-  { q: 'You do exceptional work!!', name: 'Dan Ruprecht', role: 'Artist' },
-  { q: 'AH-MAZING WORK! You are the BEST!', name: 'Divinity Roxx', role: '2x Grammy-nominated artist' },
-  { q: 'I def will be coming back for more. Very happy.', name: 'IAMOBAS', role: 'Artist' },
-  { q: 'We love it!! Thank you so much.', name: 'Eliza Cooper', role: 'Lighthouse Church' },
+  { q: 'Our team watched the video and we all think it’s <m>amazing</m>! We really love it!', name: 'Karin Wir', role: 'Product & Artist Manager', org: 'Beat Dealer Records', hl: 'org', src: 'email' },
+  { q: 'You guys really <m>out did yourselves</m> … my competitors will begin reaching out to you guys.', name: 'Divinity Roxx', role: '2x Grammy-nominated artist', hl: 'role', src: 'email' },
+  { q: 'Next time we have something, <m>I know who my first address is</m> ;)', name: 'Till Mintye', role: 'Artist Management', org: 'Madnesstic Media', hl: 'org', src: 'email' },
+  { q: 'It is <m>utterly fantastic</m>!! … Could not be more happy.', name: 'Richard Kraft', org: 'Kraft Engel Management, Los Angeles', hl: 'org', src: 'email' },
+  { q: 'You have made them great with this video. It is <m>a work of art</m>!', name: 'Jack Tempchin', role: 'Songwriter', org: '“Peaceful Easy Feeling” (Eagles)', hl: 'name+org', src: 'email' },
+  { q: 'His quality and creativity are <m>the best you can get</m>!', name: 'TYRA', role: 'Artist', src: 'google' },
+  { q: '<m>Always a good partner</m>!', name: 'Karin Wir', org: 'Beat Dealer Records', hl: 'org', src: 'google' },
+  { q: 'Today the song got added to <m>Spotify’s biggest new dance playlist</m>.', name: 'Studio One Agency', role: 'Artist management', hl: 'name', src: 'instagram' },
+  { q: 'Has plenty of ideas for <m>dynamic and appealing visuals</m>, which help retain audience attention.', name: '91 Sound Studios', role: 'Recording studio', hl: 'name', src: 'google' },
+  { q: 'Just watched the video!!! <m>It’s really great</m>.', name: '21 Savage', role: 'Major artist', src: 'instagram' },
+  { q: 'He communicated quickly and <m>delivered our video in the time he said he would</m>.', name: 'Jason Jennings', role: 'Artist', src: 'google' },
+  { q: 'You have done <m>every lyric video for me for years</m>!', name: 'Melissa Bailey', role: 'Singer-songwriter', src: 'instagram' },
+  { q: 'Will <m>DEFINITELY recommend</m> you to others!', name: 'Richard Kraft', org: 'Kraft Engel Management, Los Angeles', hl: 'org', src: 'email' },
+  { q: 'Yeah, I think it’s <m>my best one so far</m>. I’m really happy with it.', name: 'JVKE', role: 'Major artist', src: 'instagram' },
+  { q: 'Wow. … You are <m>A1, top-tier talent</m>.', name: 'Lamontt Blackshire', role: 'Music producer', src: 'email' },
+  { q: 'The lyric video for “LUNAX x CERES - Paradise” … which we <m>really loved</m>.', name: 'Natalie Foerster', role: 'Marketing & Product Manager', org: 'Beat Dealer Records', hl: 'org', src: 'email' },
+  { q: 'Oh my gosh this is <m>amazing</m>!!! You went so above and beyond and it’s just wonderful!!', name: 'Riki Lindhome', role: 'Actor, comedian and artist', src: 'email' },
+  { q: 'They really listened to my ideas and helped <m>bring the visuals I had in my head to life</m>.', name: 'Yvonne Kidd', role: 'Artist', src: 'google' },
+  { q: 'Its <m>soooooo good</m>! I’m getting so much great feedback!', name: 'Divinity Roxx', role: '2x Grammy-nominated artist', hl: 'role', src: 'email' },
+  { q: 'My opinion in three words: <m>stunning, stunning and stunning</m>.', name: 'John Stea', role: 'Songwriter', src: 'email' },
+  { q: '<m>Great work. We love it.</m>', name: 'David Wessel', role: 'Manager', org: 'HBz', hl: 'org', src: 'email' },
+  { q: 'The end result was <m>professional and high quality</m>.', name: 'Philip Paulsen', role: 'Artist', src: 'google' },
+  { q: 'He really <m>brought my song to life</m> and delivered an impeccable visual display.', name: 'Johnny Vitulli', role: 'Artist', src: 'google' },
+  { q: 'Everyone in my circle is <m>completely ecstatic</m> about the recent production of “Ask Your Phone”!', name: 'Robert Benedict', role: 'Artist', src: 'email' },
+  { q: '<m>We need you again</m> :)', name: 'Till Mintye', role: 'Artist Management', org: 'Madnesstic Media', hl: 'org', src: 'email' },
+  { q: 'Honestly I’m <m>still amazed</m> of this lyric video! It’s just so amazing.', name: 'Jay Ray', role: 'Artist', src: 'instagram' },
+  { q: '<m>Very easy to work with</m>! I definitely recommend!', name: 'Lost Soul Productions', role: 'Production company', hl: 'name', src: 'google' },
+  { q: 'Everyone I’ve shown the lyric video to <m>flips over it</m>!!', name: 'Brewster Bee', role: 'Artist', src: 'instagram' },
+  { q: 'Umesh! <m>SOLID MAN</m>! You do great work! … I know we will be doing more business!', name: 'Lamontt Blackshire', role: 'Music producer', src: 'email' },
+  { q: 'You’re definitely going to be <m>my good to go guy</m> for this sort of thing moving forward', name: 'Joe Bermudez', role: 'DJ', src: 'email' },
+  { q: 'Seriously, the video is <m>beautifully done and beyond my expectations</m>.', name: 'John Stea', role: 'Songwriter', src: 'email' },
+  { q: 'You do <m>exceptional work</m>!!', name: 'Dan Ruprecht', role: 'Artist', src: 'email' },
+  { q: '<m>AH-MAZING WORK</m>! You are the BEST!', name: 'Divinity Roxx', role: '2x Grammy-nominated artist', hl: 'role', src: 'email' },
+  { q: 'I def will be <m>coming back for more</m>. Very happy.', name: 'IAMOBAS', role: 'Artist', src: 'email' },
+  { q: '<m>We love it</m>!! Thank you so much.', name: 'Eliza Cooper', org: 'Lighthouse Church', hl: 'org', src: 'email' },
 ];
 
 export const FAQ = [
