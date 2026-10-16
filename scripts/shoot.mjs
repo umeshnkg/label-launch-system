@@ -42,7 +42,8 @@ const browsers = [
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-  page.on('requestfailed', (r) => errors.push('REQFAIL ' + r.url()));
+  // Navigating away mid-load aborts the old page's videos; that is not a failure.
+  page.on('requestfailed', (r) => { if (!/ERR_ABORTED|ERR_CACHE_/.test(r.failure()?.errorText || '')) errors.push('REQFAIL ' + r.url()); });
 
   async function shoot(url, prefix, width, height, step, max = 20) {
     await page.setViewport({ width, height });

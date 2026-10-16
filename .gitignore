@@ -5,3 +5,8 @@ dist/
 .DS_Store
 Thumbs.db
 public/og/concept-*.jpg
+
+# brainstorming mockups
+.superpowers/
+shots/
+.cache/

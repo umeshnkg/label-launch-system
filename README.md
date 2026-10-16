@@ -12,6 +12,9 @@ npm run dev        # http://localhost:5180
 npm run dev:full   # Vite behind wrangler pages dev, so /api/lead works locally (needs .dev.vars)
 npm run build      # production build -> dist/
 npm run preview    # serve dist/ on http://localhost:4180
+npm test           # unit tests (node --test)
+npm run shoot:rollout   # hero: every beat screenshotted, behaviour + phone fold checked in a real browser
+npm run rollout:budget  # hero asset weight per project
 ```
 
 ## Pages
@@ -26,7 +29,7 @@ npm run preview    # serve dist/ on http://localhost:4180
 - `src/releases.js` holds the featured case studies (YouTube id, client, dates, turnaround, deliverables, promo Shorts). `src/data.js` holds the rest: smaller lyric videos, logo wall, services, review screenshots, quotes, FAQ. Edit here, not in the HTML.
 - Views were read with yt-dlp on 2026-10-06. Refresh before a push.
 - `public/thumbs/<id>.webp` are the YouTube thumbnails (640w). `public/kit/` holds the client kit images and the two Canvas loops. `public/docs/` has the Launch Playbook and Release Cheat Sheet PDFs.
-- `public/hero.mp4` is a 28-second muted excerpt of the studio demo reel, cropped to remove the yellow progress bar. Replace with the Label Launch Kit trailer when it is rendered (keep it under ~5 MB, 1280 wide, no audio).
+- The hero is **the Rollout**: a 16:9 stage that plays one real project per 20 seconds (a notification arrives, the studio cursor clicks it, the project's real boards fan out and the client cursor picks or approves, a 30-second preview plays and takes a note, the kit lands with platform badges, one green Approve), then the next project. Data in `src/rollout.js`, code in `src/rollout/`, styles in `src/rollout.css`, web copies in `public/kit/rollout/`. To add a project: append a `ROLLOUT` entry (a `FEATURED` slug or a self-contained record plus its `story`), make its boards with `python -I scripts/rollout-boards.py` and its preview and posters with `node scripts/rollout-assets.mjs`, then run `npm test`, `npm run rollout:budget` and `npm run shoot:rollout`. `on: false` keeps a project built but out of the rotation. Design doc: `E:\Obsidian Vaults\UG Brain\plan\label-launch-system-site\02-hero-rollout-animation-design.md`.
 
 ## Logos
 
