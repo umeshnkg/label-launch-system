@@ -1,7 +1,8 @@
 # Label Launch System site: project guide
 
 Landing page for labellaunchsystem.com. Vite static multipage, vanilla JS, Cloudflare Pages.
-Brief, teardown, proof inventory and Umesh's decisions: `E:\Obsidian Vaults\UG Brain\plan\label-launch-system-site\00-fastlane-teardown-and-site-brief.md`. Read it before changing copy or packages.
+**Source of truth for the offer (message, kit, prices, terms, turnaround): `E:\Obsidian Vaults\UG Brain\wiki\entities\label-launch-system.md`. It wins over everything below.**
+Build history, teardown, proof inventory and earlier decisions: `E:\Obsidian Vaults\UG Brain\plan\label-launch-system-site\00-fastlane-teardown-and-site-brief.md`. Read it before changing copy or packages.
 
 ## Rules
 - One accent colour: change `--accent` in `src/styles.css`, nothing else. No yellow on this site.
