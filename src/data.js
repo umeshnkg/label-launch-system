@@ -117,6 +117,11 @@ export const YT_CARDS = {
   fYIrojE_OmM: { title: 'Divi Roxx Kids - Starchild Rock It Out Official Lyric Video', channel: 'Divi Roxx Kids', avatar: '/channels/divi-roxx-kids.jpg', views: '20K' },
   // Super Girl: premiere scheduled (ClickUp due 2026-10-23); title as listed on the channel 2026-10-16. Rollout hero only.
   LJlX5L_cDVs: { title: 'Every Girl Has a Superpower: Super Girl  (Official Music Video)', channel: 'Divi Roxx Kids', avatar: '/channels/divi-roxx-kids.jpg' },
+  // Bio Dad: the animated lyric video is delivered but not on YouTube yet (2026-10-16); placeholder id, delivery title. Rollout hero only.
+  'bio-dad-lyric': { title: 'Bio Dad (Official Lyric Video)', channel: 'Riki Lindhome', avatar: '/channels/riki-lindhome.jpg' },
+  // La Cuerda and I'M FREE: delivered, no public upload found (2026-10-16); placeholder ids, delivery titles. Rollout hero only, both off.
+  'la-cuerda-lyric': { title: 'CHIP MANTRA - La Cuerda (Official Lyric Video)', channel: 'CHIP MANTRA', avatar: '/kit/rollout/lacuerda-canvas-1.webp' },
+  'imfree-lyric': { title: "J McAllister - I'M FREE (Official Lyric Video)", channel: 'J McAllister', avatar: '/kit/rollout/imfree-promo-1.webp' },
 };
 
 // Individual deliverables, sold on their own. PRICES ARE DRAFTS to confirm
