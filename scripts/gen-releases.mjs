@@ -84,7 +84,7 @@ const ICON = {
 // The approve button, as the label sees it. In the process track the cursor
 // comes in and clicks it when the section scrolls into view; `done` shows the
 // clicked state straight away.
-const approve = (done) => `<span class="ok${done ? ' is-done' : ''}" aria-label="Approved by the label"><i class="ok__btn">${ICON.check}<em>Approve</em><em>Approved</em></i>${ICON.cursor.replace('<svg ', '<svg class="ok__cur" ')}</span>`;
+const approve = (done) => `<span class="appr${done ? ' is-done' : ''}" aria-label="Approved by the label"><i class="appr__btn">${ICON.check}<em>Approve</em><em>Approved</em></i>${ICON.cursor.replace('<svg ', '<svg class="appr__cur" ')}</span>`;
 
 // Before / after: what the label sent, and the kit that came back. Sits in
 // the hero of a visual case page, so it returns the block without a section.

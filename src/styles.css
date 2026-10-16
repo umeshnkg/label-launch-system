@@ -669,6 +669,21 @@ em { font-style: italic; font-weight: 500; }
 .totop:hover { background: var(--accent); }
 @media (max-width: 640px) { .totop { right: 14px; bottom: 14px; width: 42px; height: 42px; } }
 
+/* The Rollout hero on desktop, same order as phones: pill, headline, lede,
+   the stage, then the CTA and the quotes. The stage is sized from the window
+   height (its height = (100svh - the rest of the hero) / 2 for the 2:1 stage)
+   so the CTA stays above the fold, never below 480 px wide nor above 980. */
+@media (min-width: 641px) {
+  .hero { padding-top: 96px; padding-bottom: 36px; }
+  .hero .wrap { display: flex; flex-direction: column; align-items: center; }
+  .hero .pill { order: 1; }
+  .hero h1 { order: 2; margin-top: 18px; font-size: clamp(40px, min(6.3vw, 8.2svh), 72px); }
+  .hero .lede { order: 3; margin-top: 14px; }
+  .hero__media { order: 4; margin: 26px auto 0; width: min(980px, 100%, max(480px, calc((100svh - 480px) * 2))); max-width: none; }
+  .hero__cta { order: 5; margin-top: 22px; }
+  .proof { order: 6; margin-top: 30px; }
+}
+
 /* The Rollout hero on phones: pill, headline, lede, the 16:9 stage, then the
    CTA and the proof cards, so a visitor reads, watches and taps without
    scrolling (checked at 360 x 667 by scripts/shoot-rollout.mjs). */

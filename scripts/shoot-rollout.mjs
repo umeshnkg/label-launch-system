@@ -147,12 +147,14 @@ async function behaviour(b) {
     await scrollToStage(page);
     await page.waitForSelector('.rl[data-beat="notification"]', { timeout: 8000 });
     const t1 = Date.now();
-    await sleep(Math.max(0, t1 + 4450 - Date.now()));
+    // The stage now sits above the fold, so the round can start before this
+    // script sees the notification; wait for the press itself (4.3 to 4.7 s).
+    await page.waitForFunction(() => document.querySelector('.rl-ntf')?.classList.contains('is-pressed'), { timeout: 7000, polling: 20 }).catch(() => {});
     const press = await page.evaluate(() => {
       const s = document.querySelector('.rl').getBoundingClientRect(), n = document.querySelector('.rl-ntf').getBoundingClientRect();
       return { pressed: document.querySelector('.rl-ntf').classList.contains('is-pressed'), dx: Math.abs((n.left + n.width / 2) - (s.left + s.width / 2)) / s.width };
     });
-    check(press.pressed, 'press: notification is not in its pressed state at 4.45 s');
+    check(press.pressed, 'press: the notification never entered its pressed state');
     check(press.dx < 0.02, `press: notification centre is off by ${(press.dx * 100).toFixed(1)}% of the stage while pressed`);
     await sleep(Math.max(0, t1 + 12700 - Date.now()));
     const pin = await page.evaluate(() => {

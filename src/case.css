@@ -104,25 +104,26 @@
 .lk img:nth-child(2) { right: 6%; bottom: 10%; transform: rotate(4deg); }
 .kt--look:hover .lk img:nth-child(1) { transform: rotate(-9deg) translate(-7%, -10%); }
 .kt--look:hover .lk img:nth-child(2) { transform: rotate(6deg) translate(5%, 5%) scale(1.04); }
-.lk .ok { top: auto; bottom: 8px; }
+.lk .appr { top: auto; bottom: 8px; }
 
-/* The approve button. .is-done = already clicked; inside [data-process] the
+/* The approve button (.appr, not .ok: the homepage uses .ok for plain green
+   ticks, and case.css loads there too). .is-done = already clicked; inside [data-process] the
    cursor comes in and clicks it when the track scrolls into view. */
-.ok { position: absolute; top: 8px; right: 8px; z-index: 2; display: inline-block; }
-.ok__btn { position: relative; display: inline-grid; grid-template-columns: auto auto; align-items: center; gap: 5px; padding: 6px 10px 6px 8px; border-radius: 999px; background: var(--ink); color: #fff; font-style: normal; font-size: 11.5px; font-weight: 700; letter-spacing: 0.03em; box-shadow: var(--shadow-sm); }
-.ok__btn svg { width: 13px; height: 13px; }
-.ok__btn em { grid-area: 1 / 2; font-style: normal; white-space: nowrap; }
-.ok__btn em:nth-of-type(2) { opacity: 0; }
-.ok__cur { position: absolute; left: 60%; top: 50%; width: 18px; height: 18px; opacity: 0; transform: translate(26px, 22px); filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35)); }
-.ok.is-done .ok__btn { background: var(--ok); }
-.ok.is-done .ok__btn em:nth-of-type(1) { opacity: 0; }
-.ok.is-done .ok__btn em:nth-of-type(2) { opacity: 1; }
-.ok.is-done .ok__cur { opacity: 1; transform: translate(6px, 6px); }
-.pt__step .ok { --ok-d: calc(.8s + var(--i) * .6s); }
-[data-process].is-in .ok:not(.is-done) .ok__cur { animation: ok-cur 1.4s ease forwards var(--ok-d); }
-[data-process].is-in .ok:not(.is-done) .ok__btn { animation: ok-btn 1.4s ease forwards var(--ok-d); }
-[data-process].is-in .ok:not(.is-done) .ok__btn em:nth-of-type(1) { animation: ok-out 1.4s ease forwards var(--ok-d); }
-[data-process].is-in .ok:not(.is-done) .ok__btn em:nth-of-type(2) { animation: ok-in 1.4s ease forwards var(--ok-d); }
+.appr { position: absolute; top: 8px; right: 8px; z-index: 2; display: inline-block; }
+.appr__btn { position: relative; display: inline-grid; grid-template-columns: auto auto; align-items: center; gap: 5px; padding: 6px 10px 6px 8px; border-radius: 999px; background: var(--ink); color: #fff; font-style: normal; font-size: 11.5px; font-weight: 700; letter-spacing: 0.03em; box-shadow: var(--shadow-sm); }
+.appr__btn svg { width: 13px; height: 13px; }
+.appr__btn em { grid-area: 1 / 2; font-style: normal; white-space: nowrap; }
+.appr__btn em:nth-of-type(2) { opacity: 0; }
+.appr__cur { position: absolute; left: 60%; top: 50%; width: 18px; height: 18px; opacity: 0; transform: translate(26px, 22px); filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35)); }
+.appr.is-done .appr__btn { background: var(--ok); }
+.appr.is-done .appr__btn em:nth-of-type(1) { opacity: 0; }
+.appr.is-done .appr__btn em:nth-of-type(2) { opacity: 1; }
+.appr.is-done .appr__cur { opacity: 1; transform: translate(6px, 6px); }
+.pt__step .appr { --ok-d: calc(.8s + var(--i) * .6s); }
+[data-process].is-in .appr:not(.is-done) .appr__cur { animation: ok-cur 1.4s ease forwards var(--ok-d); }
+[data-process].is-in .appr:not(.is-done) .appr__btn { animation: ok-btn 1.4s ease forwards var(--ok-d); }
+[data-process].is-in .appr:not(.is-done) .appr__btn em:nth-of-type(1) { animation: ok-out 1.4s ease forwards var(--ok-d); }
+[data-process].is-in .appr:not(.is-done) .appr__btn em:nth-of-type(2) { animation: ok-in 1.4s ease forwards var(--ok-d); }
 @keyframes ok-cur { 0% { opacity: 0; transform: translate(26px, 22px); } 45% { opacity: 1; transform: translate(6px, 6px); } 58% { transform: translate(6px, 6px) scale(.8); } 70%, 100% { opacity: 1; transform: translate(6px, 6px); } }
 @keyframes ok-btn { 0%, 57% { background: var(--ink); transform: none; } 60% { transform: scale(.94); } 68%, 100% { background: var(--ok); transform: none; } }
 @keyframes ok-out { 0%, 60% { opacity: 1; } 70%, 100% { opacity: 0; } }
