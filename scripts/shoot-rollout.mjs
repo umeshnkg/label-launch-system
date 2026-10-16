@@ -111,6 +111,9 @@ async function beats(b) {
     const limit = h + 40;
     for (const [k, v] of Object.entries({ h1: r.h1, lede: r.lede, stage: r.stage, cta: r.cta })) check(v !== null && v <= limit, `fold@${w}x${h}: ${k} bottom ${v} > ${limit}`);
     check(Math.abs(r.stageW - (r.vw - 40)) <= 2, `fold@${w}x${h}: stage width ${r.stageW}, expected ${r.vw - 40} (20 px gutters)`);
+    // The hero reserves the 16:9 box in CSS before any JS runs, so nothing shifts when the stage mounts.
+    const reserved = await page.evaluate(() => getComputedStyle(document.querySelector('[data-rollout]')).aspectRatio);
+    check(/16\s*\/\s*9/.test(reserved), `fold@${w}x${h}: [data-rollout] has no 16:9 aspect-ratio in CSS (got "${reserved}")`);
     const hero = await page.$('.hero');
     await hero.screenshot({ path: path.join(out, `fold-${w}.png`) });
   }
@@ -135,6 +138,38 @@ async function behaviour(b) {
     }
     const firstProject = await projectOf(page);
     check(!!firstProject, 'advance: [data-rollout] has no data-project');
+
+    // Mid-beat states the frozen dev view cannot show: the press must not move
+    // the notification sideways, the pin must stay while the note types and
+    // land where the cursor clicked, and the preview video must pause with the round.
+    await page.goto(`${BASE}/`, { waitUntil: 'networkidle0', timeout: 60000 });
+    await scrollToStage(page);
+    await page.waitForSelector('.rl[data-beat="notification"]', { timeout: 8000 });
+    const t1 = Date.now();
+    await sleep(Math.max(0, t1 + 2150 - Date.now()));
+    const press = await page.evaluate(() => {
+      const s = document.querySelector('.rl').getBoundingClientRect(), n = document.querySelector('.rl-ntf').getBoundingClientRect();
+      return { pressed: document.querySelector('.rl-ntf').classList.contains('is-pressed'), dx: Math.abs((n.left + n.width / 2) - (s.left + s.width / 2)) / s.width };
+    });
+    check(press.pressed, 'press: notification is not in its pressed state at 2.15 s');
+    check(press.dx < 0.02, `press: notification centre is off by ${(press.dx * 100).toFixed(1)}% of the stage while pressed`);
+    await sleep(Math.max(0, t1 + 10200 - Date.now()));
+    const pin = await page.evaluate(() => {
+      const scr = document.querySelector('.rl-preview__scr').getBoundingClientRect(), p = document.querySelector('.rl-pin').getBoundingClientRect();
+      return { opacity: getComputedStyle(document.querySelector('.rl-pin')).opacity, typing: (document.querySelector('.rl-note__txt').textContent || '').length > 3, x: (p.left + p.width / 2 - scr.left) / scr.width, y: (p.top + p.height / 2 - scr.top) / scr.height };
+    });
+    check(pin.typing, 'pin: the note is not typing at 10.2 s');
+    check(pin.opacity === '1', `pin: pin is not visible while the note types (opacity ${pin.opacity})`);
+    check(Math.abs(pin.x - 0.58) < 0.04 && Math.abs(pin.y - 0.6) < 0.06, `pin: pin sits at ${(pin.x * 100).toFixed(0)}% / ${(pin.y * 100).toFixed(0)}%, the cursor clicked at 58% / 60%`);
+    const playing = await page.evaluate(() => { const v = document.querySelector('.rl-preview video'); return v && !v.paused; });
+    check(playing, 'pause: the preview video is not playing during beat 3');
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));   // stage leaves the viewport → the round pauses
+    await sleep(600);
+    const pausedAway = await page.evaluate(() => { const v = document.querySelector('.rl-preview video'); return v && v.paused; });
+    check(pausedAway, 'pause: the preview video keeps playing while the stage is off-screen');
+    await scrollToStage(page);   // the page scrolls smoothly, so the stage is back in view ~1.5 s later
+    const resumed = await page.waitForFunction(() => { const v = document.querySelector('.rl-preview video'); return v && !v.paused && document.querySelector('.rl').dataset.beat === 'preview'; }, { timeout: 4000, polling: 100 }).then(() => true).catch(() => false);
+    check(resumed, 'pause: the preview video did not resume with the round');
 
     // Skip: a double tap produces one stage, restarted at the notification.
     await page.goto(`${BASE}/`, { waitUntil: 'networkidle0', timeout: 60000 });

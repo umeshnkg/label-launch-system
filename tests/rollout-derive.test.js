@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { releaseHorizon, notificationFor, kitTiles, resolveProject, validateProject, activeProjects } from '../src/rollout/derive.js';
+import { releaseHorizon, notificationFor, kitTiles, resolveProject, validateProject, activeProjects, safeProjects } from '../src/rollout/derive.js';
 import { ROLLOUT } from '../src/rollout.js';
 import { FEATURED } from '../src/releases.js';
 import { YT_CARDS, REELS } from '../src/data.js';
@@ -65,6 +65,28 @@ test('activeProjects skips off entries and throws on an invalid one', () => {
   assert.equal(list.length, 0);
   const broken = { ...ROLLOUT[0], story: { ...ROLLOUT[0].story, boards: [ROLLOUT[0].story.boards[0]] } };
   assert.throws(() => activeProjects([broken], deps), /rollout: paradise: .*boards/);
+});
+
+test('safeProjects keeps the valid entries, logs and skips an invalid one, never throws', () => {
+  const broken = { ...ROLLOUT[0], story: { ...ROLLOUT[0].story, boards: [ROLLOUT[0].story.boards[0]] } };
+  const logged = [];
+  const orig = console.error; console.error = (...a) => logged.push(a.join(' '));
+  let out;
+  try { out = safeProjects([broken, ROLLOUT[0], { slug: 'nope', on: true, story: ROLLOUT[0].story }], deps); } finally { console.error = orig; }
+  assert.deepEqual(out.map((p) => p.slug), ['paradise']);
+  assert.equal(logged.length, 2);
+  assert.match(logged[0], /rollout: paradise: .*boards/);
+  assert.match(logged[1], /rollout: no record for nope/);
+});
+
+test('an unpublished record gets a master card, needs no YT_CARDS entry, and keeps its own title', () => {
+  const record = { ...FEATURED.find((x) => x.slug === 'paradise'), id: 'not-on-youtube', unpublished: true, thumb: '/kit/rollout/x.webp' };
+  const p = resolveProject({ record, story: ROLLOUT[0].story }, deps);
+  assert.equal(p.cardKind, 'master');
+  assert.equal(p.ytTitle, 'Paradise (Official Lyric Video)');
+  assert.deepEqual(validateProject(p).filter((m) => /YT_CARDS/.test(m)), []);
+  const published = resolveProject(ROLLOUT[0], deps);
+  assert.equal(published.cardKind, 'youtube');
 });
 
 test('every active project validates', () => {

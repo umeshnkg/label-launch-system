@@ -8,7 +8,7 @@
     "gen": "node scripts/gen-releases.mjs",
     "dev": "npm run gen && vite --port 5180",
     "dev:full": "npm run gen && wrangler pages dev --compatibility-date=2024-01-01 -- vite --port 5180",
-    "prebuild": "npm run gen",
+    "prebuild": "npm run gen && npm test",
     "build": "vite build",
     "preview": "vite preview --port 4180",
     "shoot": "node scripts/shoot.mjs",

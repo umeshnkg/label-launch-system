@@ -68,12 +68,13 @@ export const ROLLOUT = [
   } },
 
   // La Cuerda (CHIP MANTRA, 2023). Off: no public YouTube upload was found on
-  // 2026-10-16, so the card uses a placeholder id and the delivered thumbnail.
-  // Flip `on` and set the real `id` when the video is public. Boards are two
+  // 2026-10-16, so the kit shows a "master delivered" card (our thumbnail, the
+  // delivery's title, no channel). Flip `on`, set the real `id` and drop
+  // `unpublished` when the video is public. Boards are two
   // pages of the illustrated storyboard (Storyboard_V2.pdf). No ClickUp task
   // was found, so the release tag reads "Date set".
   { on: false, record: {
-    slug: 'la-cuerda', id: 'la-cuerda-lyric', title: 'La Cuerda', artist: 'CHIP MANTRA',
+    slug: 'la-cuerda', id: 'la-cuerda-lyric', unpublished: true, title: 'La Cuerda', artist: 'CHIP MANTRA',
     thumb: '/kit/rollout/lacuerda-thumb-1.webp',
     kit: [
       { type: 'yt', n: 1 },
@@ -103,13 +104,14 @@ export const ROLLOUT = [
   // Bio Dad (Riki Lindhome). Animated lyric video delivered 2026-05-27 with the
   // cover, 7 thumbnails, 2 teasers, 3 trailers and 3 Out Now clips. The lyric
   // video is not on her channel yet (2026-10-16; her live-action comedy video
-  // vS0etuxv4X8 is), so the YouTube card shows the delivered thumbnail design
-  // and the delivery's title under a placeholder id; swap `id` and `thumb` for
-  // the real upload when she posts it. Dates: ClickUp order 2026-02-13, the
+  // vS0etuxv4X8 is), so the kit shows a "master delivered" card: our thumbnail
+  // design and the delivery's title, no channel, no YouTube badge. Set `id` to
+  // the upload and drop `unpublished` and `thumb` when she posts it. Dates:
+  // ClickUp order 2026-02-13, the
   // song's release 2026-03-23. Boards: the treatment's Main Character and
   // Style Frames pages (the PDF copies; replace with originals if Umesh has them).
   { on: true, record: {
-    slug: 'bio-dad', id: 'bio-dad-lyric', title: 'Bio Dad', artist: 'Riki Lindhome',
+    slug: 'bio-dad', id: 'bio-dad-lyric', unpublished: true, title: 'Bio Dad', artist: 'Riki Lindhome',
     ordered: '2026-02-13', released: '2026-03-23',
     thumb: '/kit/rollout/biodad-thumb-1.webp', cover: '/kit/rollout/biodad-cover.webp',
     kit: [
@@ -141,7 +143,7 @@ export const ROLLOUT = [
   // delivered character stills. The delivery has no thumbnails, so the card
   // uses the stills board. ClickUp order created 2025-07-07; no release date.
   { on: false, record: {
-    slug: 'im-free', id: 'imfree-lyric', title: "I'M FREE", artist: 'J McAllister',
+    slug: 'im-free', id: 'imfree-lyric', unpublished: true, title: "I'M FREE", artist: 'J McAllister',
     ordered: '2025-07-07',
     thumb: '/kit/rollout/imfree-board-b.webp',
     kit: [

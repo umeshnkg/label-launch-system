@@ -56,12 +56,18 @@ export function resolveProject(entry, { FEATURED, YT_CARDS, REELS }) {
   const card = YT_CARDS[record.id] || null;
   const notification = notificationFor(record, story);
   const tiles = kitTiles(record, story, REELS);
+  // A delivered video that is not on YouTube yet (record.unpublished) gets a
+  // "master" card: our thumbnail and the delivery's title, no channel, no
+  // platform badge. Nothing is claimed about an upload that does not exist.
+  const unpublished = !!record.unpublished;
   const p = {
     slug: record.slug, title: record.title, artist: record.artist,
-    ytId: record.id, ytTitle: card?.title || '', channel: card?.channel || '', avatar: card?.avatar || '',
+    ytId: record.id, cardKind: unpublished ? 'master' : 'youtube',
+    ytTitle: unpublished ? `${record.title} (Official Lyric Video)` : (card?.title || ''),
+    channel: unpublished ? '' : (card?.channel || ''), avatar: unpublished ? '' : (card?.avatar || ''),
     thumb: record.thumb || `/thumbs/${record.id}.webp`,   // record.thumb: a delivered thumbnail design, for premieres YouTube has no image for yet
     notification, boards: story.boards || [], pick: story.pick, preview: story.preview, note: story.note,
-    change: story.change, tiles, hasCard: !!card,
+    change: story.change, tiles, hasCard: unpublished || !!card,
   };
   const urls = [
     p.thumb, p.avatar, ...notification.icon.images, ...p.boards.map((b) => b.img),
@@ -96,6 +102,7 @@ export function validateProject(p) {
   return out;
 }
 
+/* Strict: the tests and the budget script use it; one bad entry fails the build. */
 export function activeProjects(list, deps) {
   return list.filter((e) => e.on).map((e) => {
     const p = resolveProject(e, deps);
@@ -103,4 +110,20 @@ export function activeProjects(list, deps) {
     if (problems.length) throw new Error(`rollout: ${p.slug}: ${problems.join('; ')}`);
     return p;
   });
+}
+
+/* Lenient: the live page uses it; a bad entry is logged and skipped, the rest play. */
+export function safeProjects(list, deps) {
+  const out = [];
+  for (const e of list.filter((x) => x.on)) {
+    try {
+      const p = resolveProject(e, deps);
+      const problems = validateProject(p);
+      if (problems.length) { console.error(`rollout: ${p.slug}: ${problems.join('; ')}`); continue; }
+      out.push(p);
+    } catch (err) {
+      console.error(err && err.message ? err.message : String(err));
+    }
+  }
+  return out;
 }

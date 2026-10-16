@@ -654,9 +654,13 @@ $$('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); }
    the order ROLLOUT lists them. Dev view: /?rollout=beat:<name> freezes the
    first project at the end of that beat. */
 import { ROLLOUT } from './rollout.js';
-import { activeProjects } from './rollout/derive.js';
+import { safeProjects } from './rollout/derive.js';
 import { mountRollout } from './rollout/index.js';
 {
   const root = $('[data-rollout]');
-  if (root) mountRollout(root, { projects: activeProjects(ROLLOUT, { FEATURED, YT_CARDS, REELS }) });
+  if (root) {
+    // A bad entry is logged and skipped (npm test catches it before a build); with nothing left to play, the still stands in.
+    const mounted = mountRollout(root, { projects: safeProjects(ROLLOUT, { FEATURED, YT_CARDS, REELS }) });
+    if (!mounted) root.innerHTML = '<img src="/kit/rollout/fallback.webp" alt="A delivered release kit: lyric video, promo clips, Spotify Canvas, thumbnails" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg)" />';
+  }
 }

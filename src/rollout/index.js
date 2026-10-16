@@ -77,10 +77,18 @@ export function mountRollout(root, {
     return { next() { btn.click(); }, pause() {}, resume() {}, destroy() { destroyed = true; stage?.remove(); btn.remove(); } };
   }
 
+  // The preview clip follows the round: it stops when the round pauses and
+  // picks up again on resume (the cues restart it at the beat's start anyway).
+  const video = () => stage?.querySelector('.rl-preview video');
+  const pause = () => { runner?.pause(); video()?.pause(); };
   const play = () => {
     if (!runner || destroyed || hidden || !inView) return;
     if (runner.state() === 'idle') runner.start();
-    else if (runner.state() === 'paused') runner.resume();
+    else if (runner.state() === 'paused') {
+      runner.resume();
+      const v = video();
+      if (v && stage.dataset.beat === 'preview' && !saveData && v.getAttribute('src')) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); }
+    }
   };
 
   const show = (i) => {
@@ -115,19 +123,19 @@ export function mountRollout(root, {
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
       inView = e.intersectionRatio >= 0.3;
-      if (inView) play(); else runner?.pause();
+      if (inView) play(); else pause();
     }
   }, { threshold: [0, 0.3, 0.6] });
   io.observe(root);
 
-  const onVis = () => { hidden = document.hidden; if (hidden) runner?.pause(); else play(); };
+  const onVis = () => { hidden = document.hidden; if (hidden) pause(); else play(); };
   document.addEventListener('visibilitychange', onVis);
 
   show(idx);
 
   return {
     next,
-    pause() { runner?.pause(); },
+    pause,
     resume() { play(); },
     destroy() { destroyed = true; runner?.stop(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); stage?.remove(); skipBtn.remove(); },
   };

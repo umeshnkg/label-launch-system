@@ -2,7 +2,10 @@
    9.8px on the 980px desktop stage, 3.6px at 360px) with px floors from the
    design doc so nothing gets unreadable on a phone. 16:9 at every width.
    Overlays (.sp .ig .am) reuse the site's own rules via .phone--canvas/.phone--reel/.phone--apple. */
-.rollout { position: relative; }
+/* The hero reserves the 16:9 box before any JS runs, so mounting the stage
+   never shifts the CTA under it. The stage fills the box. */
+.rollout { position: relative; aspect-ratio: 16 / 9; }
+.rollout > .rl { position: absolute; inset: 0; }
 .rl {
   position: relative; container-type: inline-size; aspect-ratio: 16 / 9; overflow: hidden;
   background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
@@ -23,8 +26,12 @@
 .rl-cur--studio svg path { fill: var(--accent); } .rl-cur--studio .rl-cur__tag { background: var(--accent); }
 .rl-cur--client svg path { fill: var(--ink); } .rl-cur--client .rl-cur__tag { background: var(--ink); }
 
-/* The pressed state (the button or card under the cursor). */
-.is-pressed { transform: scale(.97) !important; }
+/* The pressed state (the button or card under the cursor). Each pressed
+   element keeps its own placement transform; only the scale changes. */
+.rl-ntf.is-in.is-pressed { transform: translate(-50%, 0) scale(.97); animation: none; }
+.rl-board .rl-ok.is-pressed { transform: translateX(-50%) scale(.96); }
+.rl-preview__scr.is-pressed { transform: scale(.985); }
+.rl-preview .rl-ok.is-pressed { transform: scale(.96); }
 
 /* Beat 1: the notification, macOS-style. Three lines, never wraps. */
 .rl-ntf {
@@ -81,8 +88,10 @@
 .rl-preview__lb { position: absolute; left: 4%; top: 6%; color: #fff; font-size: max(8.5px, .9cqw); font-weight: 600; background: rgba(0,0,0,.45); padding: .2em .7em; border-radius: 999px; }
 .rl-preview__v2 { position: absolute; right: 4%; top: 6%; color: #fff; font-size: max(8.5px, .9cqw); font-weight: 700; background: var(--accent); padding: .2em .7em; border-radius: 999px; opacity: 0; transition: opacity .25s ease; }
 .rl.is-v2 .rl-preview__v2 { opacity: 1; }
-.rl-pin { position: absolute; left: 50%; top: 40%; width: max(10px, 1.2cqw); height: max(10px, 1.2cqw); border-radius: 50%; background: var(--ink); border: 2px solid #fff; box-shadow: 0 0 0 3px rgba(11,11,12,.2); opacity: 0; transform: scale(.4); transition: opacity .2s ease, transform .25s cubic-bezier(.2,.9,.3,1.4); }
-.rl-preview .rl-note.is-open ~ * .rl-pin, .rl-preview__scr.is-pressed .rl-pin, .rl.is-v2 .rl-pin { opacity: 1; transform: scale(1); }
+/* The pin lands where the client cursor clicked (58% / 60% of the frame, the
+   cursor's anchor offset in render.js) and stays until the round clears. */
+.rl-pin { position: absolute; left: 58%; top: 60%; width: max(10px, 1.2cqw); height: max(10px, 1.2cqw); margin: calc(max(10px, 1.2cqw) / -2) 0 0 calc(max(10px, 1.2cqw) / -2); border-radius: 50%; background: var(--ink); border: 2px solid #fff; box-shadow: 0 0 0 3px rgba(11,11,12,.2); opacity: 0; transform: scale(.4); transition: opacity .2s ease, transform .25s cubic-bezier(.2,.9,.3,1.4); }
+.rl-preview__scr.is-pressed .rl-pin, .rl.is-noted .rl-pin, .rl.is-v2 .rl-pin { opacity: 1; transform: scale(1); }
 .rl-preview__ctl { display: flex; align-items: center; gap: .6em; margin-top: max(4px, .5cqw); font-size: max(8.5px, .9cqw); color: var(--muted); font-variant-numeric: tabular-nums; }
 .rl-tr { flex: 1; height: max(2px, .3cqw); background: #e3e3e6; border-radius: 2px; position: relative; }
 .rl-tr i { position: absolute; left: 0; top: 0; height: 100%; width: 40%; background: var(--accent); border-radius: 2px; transition: width .9s linear; }
@@ -116,6 +125,7 @@
 .rl-ytc__av { width: 100%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; }
 .rl-ytc__meta b { display: block; font-size: max(8px, .95cqw); line-height: 1.25; font-weight: 600; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .rl-ytc__meta em { display: block; font-style: normal; font-size: max(7px, .8cqw); color: var(--muted); margin-top: .2em; }
+.rl-ytc--master .rl-ytc__meta { grid-template-columns: 1fr; }
 .rl-stack { position: absolute; top: 8%; height: 60%; }
 .rl-stack--reels { left: 4%; width: 24%; } .rl-stack--vert { right: 4%; width: 24%; }
 .rl-phone { position: absolute; top: 0; width: 38%; aspect-ratio: 9 / 19; border-radius: max(8px, 1cqw); border: 2px solid #111; background: #000; box-shadow: 0 10px 24px rgba(0,0,0,.28); overflow: visible; }

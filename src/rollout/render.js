@@ -83,9 +83,10 @@ function kit(p) {
   const t = p.tiles;
   let ti = 0;
   const tile = (cls, inner) => `<div class="rl-tile ${cls}" data-t="${ti++}">${inner}</div>`;
-  const ytc = tile('rl-ytc', `
-      <div class="rl-ytc__th">${lazy(p.thumb)}${badge('youtube')}</div>
-      <div class="rl-ytc__meta">${p.avatar ? lazy(p.avatar, 'rl-ytc__av') : ''}<span><b>${esc(p.ytTitle)}</b><em>${esc(p.channel)}</em></span></div>`);
+  const master = p.cardKind === 'master';
+  const ytc = tile(`rl-ytc${master ? ' rl-ytc--master' : ''}`, `
+      <div class="rl-ytc__th">${lazy(p.thumb)}${master ? '' : badge('youtube')}</div>
+      <div class="rl-ytc__meta">${!master && p.avatar ? lazy(p.avatar, 'rl-ytc__av') : ''}<span><b>${esc(p.ytTitle)}</b><em>${master ? 'Lyric video, master delivered' : esc(p.channel)}</em></span></div>`);
   const reelsHtml = t.reels.map((r, i) => tile(`rl-phone phone--reel rl-phone--${i}`, `${lazy(r.poster)}${reelsOverlay(t.reel)}${badge(r.badge)}`)).join('');
   const vertHtml = t.verticals.map((v, i) => v.kind === 'motion'
     ? tile(`rl-phone phone--apple rl-phone--${i}`, `${lazy(v.poster, 'rl-phone__art')}${appleOverlay({ title: p.title, artist: p.artist })}${badge(v.badge)}`)
@@ -159,6 +160,7 @@ export function applyCue(stage, cue) {
     case 'note': {
       const txt = q('.rl-note__txt');
       if (!txt) break;
+      stage.classList.add('is-noted');
       q('.rl-note')?.classList.add('is-open');
       txt.textContent = (txt.dataset.note || '').slice(0, cue.chars);
       break;
@@ -191,7 +193,7 @@ export function applyCue(stage, cue) {
     case 'tile': q(`.rl-tile[data-t="${cue.i}"]`)?.classList.add('is-in'); break;
     case 'end': {
       stage.dataset.beat = '';
-      stage.classList.remove('is-v2', 'is-playing');
+      stage.classList.remove('is-v2', 'is-playing', 'is-noted');
       qa('.' + STATE_CLASSES.join(', .')).forEach((el) => el.classList.remove(...STATE_CLASSES));
       const txt = q('.rl-note__txt'); if (txt) txt.textContent = '';
       const tc = q('.rl-tc'); if (tc) tc.textContent = '0:12 / 0:30';
