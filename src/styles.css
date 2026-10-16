@@ -107,10 +107,14 @@ em { font-style: italic; font-weight: 500; }
 }
 .pill__tag { background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.02em; }
 .hero h1 {
-  margin: 26px auto 0; max-width: 1000px;
-  font-size: clamp(40px, 6.6vw, 76px); letter-spacing: -0.04em; line-height: 1.0; font-weight: 600; text-wrap: balance;
+  margin: 26px auto 0; max-width: 1080px;
+  font-size: clamp(40px, 6.3vw, 72px); letter-spacing: -0.04em; line-height: 1.0; font-weight: 600; text-wrap: balance;
 }
-.hero .lede { margin: 22px auto 0; max-width: 680px; }
+/* One line per thought on desktop; the span flows inline on phones (the space before <em> must stay in the markup). */
+.hero h1 .h1-line { display: block; }
+@media (max-width: 640px) { .hero h1 .h1-line { display: inline; } }
+.hero .lede { margin: 22px auto 0; max-width: 680px; text-wrap: pretty; }
+.nobr { white-space: nowrap; }
 .hero__cta { display: flex; gap: 12px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
 /* Proof row: two cards with one anatomy (small caps eyebrow, then content),
    same height, together no wider than the lede above them. */
