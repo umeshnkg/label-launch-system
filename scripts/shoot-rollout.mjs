@@ -86,6 +86,24 @@ async function beats(b) {
       await hero.screenshot({ path: path.join(out, `${beat}-${tag}.png`) });
     }
   }
+  // Phone fold: headline, lede, stage and the main CTA all on screen together, stage edge to edge.
+  for (const [w, h] of [[360, 667], [390, 844]]) {
+    await page.setViewport({ width: w, height: h, deviceScaleFactor: 1 });
+    await page.goto(`${BASE}/?rollout=beat:notification`, { waitUntil: 'networkidle0', timeout: 60000 });
+    await page.waitForSelector('.rl', { timeout: 8000 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await sleep(300);
+    const r = await page.evaluate(() => {
+      const bottom = (sel) => { const el = document.querySelector(sel); return el ? Math.round(el.getBoundingClientRect().bottom) : null; };
+      const rl = document.querySelector('.rl').getBoundingClientRect();
+      return { h1: bottom('.hero h1'), lede: bottom('.hero .lede'), stage: Math.round(rl.bottom), cta: bottom('.hero__cta .btn'), stageW: Math.round(rl.width), vw: document.documentElement.clientWidth };
+    });
+    const limit = h + 40;
+    for (const [k, v] of Object.entries({ h1: r.h1, lede: r.lede, stage: r.stage, cta: r.cta })) check(v !== null && v <= limit, `fold@${w}x${h}: ${k} bottom ${v} > ${limit}`);
+    check(Math.abs(r.stageW - (r.vw - 40)) <= 2, `fold@${w}x${h}: stage width ${r.stageW}, expected ${r.vw - 40} (20 px gutters)`);
+    const hero = await page.$('.hero');
+    await hero.screenshot({ path: path.join(out, `fold-${w}.png`) });
+  }
   await page.close();
 }
 
