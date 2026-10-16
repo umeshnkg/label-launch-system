@@ -38,9 +38,10 @@ function webpUnder(makeArgs, outFile, maxBytes, startQ = 82) {
 }
 
 if (mode === 'preview') {
-  const id = need('id'), start = need('start'), slug = need('out'), len = args.len || '5';
-  const src = path.join(CACHE, `${id}.mp4`);
-  if (!fs.existsSync(src)) {
+  const start = need('start'), slug = need('out'), len = args.len || '5';
+  const id = args.in ? null : need('id');
+  const src = args.in || path.join(CACHE, `${id}.mp4`);   // --in <local master> skips yt-dlp (premieres, unlisted uploads)
+  if (!fs.existsSync(src) && id) {
     console.log(`yt-dlp ${id} (video only, <=720p)`);
     run('yt-dlp', ['-f', 'bv*[height<=720][ext=mp4]/bv*[height<=720]/b[height<=720]', '-o', src, `https://www.youtube.com/watch?v=${id}`]);
   }

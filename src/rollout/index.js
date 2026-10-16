@@ -49,11 +49,12 @@ export function mountRollout(root, {
     return stage;
   };
 
-  // Dev view: /?rollout=beat:<name> freezes project 0 at the end of that beat.
+  // Dev view: /?rollout=beat:<name>[&p=<index>] freezes a project at the end of that beat.
   const m = typeof location !== 'undefined' && location.search.match(/rollout=beat:(\w+)/);
   if (m && BEATS[m[1]]) {
-    place(projects[0]);
-    for (const cue of cuesFor(projects[0])) { if (cue.at >= BEATS[m[1]][1]) break; if (cue.type !== 'video') applyCue(stage, cue); }
+    const pi = Math.min(n - 1, Math.max(0, Number((location.search.match(/[?&]p=(\d+)/) || [])[1] || 0)));
+    place(projects[pi]);
+    for (const cue of cuesFor(projects[pi])) { if (cue.at >= BEATS[m[1]][1]) break; if (cue.type !== 'video') applyCue(stage, cue); }
     return { next() {}, pause() {}, resume() {}, destroy() { stage?.remove(); } };
   }
 

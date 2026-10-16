@@ -59,7 +59,7 @@ export function resolveProject(entry, { FEATURED, YT_CARDS, REELS }) {
   const p = {
     slug: record.slug, title: record.title, artist: record.artist,
     ytId: record.id, ytTitle: card?.title || '', channel: card?.channel || '', avatar: card?.avatar || '',
-    thumb: `/thumbs/${record.id}.webp`,
+    thumb: record.thumb || `/thumbs/${record.id}.webp`,   // record.thumb: a delivered thumbnail design, for premieres YouTube has no image for yet
     notification, boards: story.boards || [], pick: story.pick, preview: story.preview, note: story.note,
     change: story.change, tiles, hasCard: !!card,
   };

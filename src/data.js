@@ -115,6 +115,8 @@ export const YT_CARDS = {
   sf4xhkoMCvw: { title: 'LUNAX - Paradise (feat. CERES) (Official Video)', channel: 'LUNAX', avatar: '/channels/lunax.jpg' },
   // Views read from the watch page on 2026-10-07: 19,966.
   fYIrojE_OmM: { title: 'Divi Roxx Kids - Starchild Rock It Out Official Lyric Video', channel: 'Divi Roxx Kids', avatar: '/channels/divi-roxx-kids.jpg', views: '20K' },
+  // Super Girl: premiere scheduled (ClickUp due 2026-10-23); title as listed on the channel 2026-10-16. Rollout hero only.
+  LJlX5L_cDVs: { title: 'Every Girl Has a Superpower: Super Girl  (Official Music Video)', channel: 'Divi Roxx Kids', avatar: '/channels/divi-roxx-kids.jpg' },
 };
 
 // Individual deliverables, sold on their own. PRICES ARE DRAFTS to confirm

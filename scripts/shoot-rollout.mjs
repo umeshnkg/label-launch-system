@@ -47,12 +47,15 @@ const beatOf = (page) => page.evaluate(() => document.querySelector('.rl')?.data
 const projectOf = (page) => page.evaluate(() => document.querySelector('[data-rollout]')?.dataset.project ?? null);
 const scrollToStage = (page) => page.evaluate(() => document.querySelector('[data-rollout]').scrollIntoView({ block: 'center' }));
 
+// ROLLOUT_P=<index> shoots that project's beats instead of the first one's.
+const P = Number(process.env.ROLLOUT_P || 0);
+
 async function beats(b) {
   const page = await newPage(b);
   for (const beat of ['notification', 'directions', 'preview', 'delivered']) {
     for (const [w, h, tag] of [[1280, 800, 'd'], [360, 667, 'm']]) {
       await page.setViewport({ width: w, height: h, deviceScaleFactor: 1 });
-      await page.goto(`${BASE}/?rollout=beat:${beat}`, { waitUntil: 'networkidle0', timeout: 60000 });
+      await page.goto(`${BASE}/?rollout=beat:${beat}&p=${P}`, { waitUntil: 'networkidle0', timeout: 60000 });
       const found = await page.waitForSelector(`.rl[data-beat="${beat}"]`, { timeout: 8000 }).catch(() => null);
       check(found, `${beat}@${tag}: no .rl[data-beat="${beat}"]`);
       if (!found) continue;
@@ -83,7 +86,7 @@ async function beats(b) {
         check(r.chkVisible === 0, `delivered@${tag}: ${r.chkVisible} check marks visible`);
       }
       const hero = await page.$('.hero');
-      await hero.screenshot({ path: path.join(out, `${beat}-${tag}.png`) });
+      await hero.screenshot({ path: path.join(out, `${P ? `p${P}-` : ''}${beat}-${tag}.png`) });
     }
   }
   // Phone fold: headline, lede, stage and the main CTA all on screen together, stage edge to edge.

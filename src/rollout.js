@@ -34,4 +34,36 @@ export const ROLLOUT = [
     // Delivered Apple Motion Cover (2 in Dropbox); shown in the hero only, the case page leaves them out.
     motionCover: { poster: '/kit/canvas-paradise-neutral-poster.webp' },
   } },
+
+  // Super Girl (Divi Roxx Kids, IROXX). No case page, so the record lives here.
+  // Boards are the treatment's Moodboard and Character Design pages. The label
+  // sent the song with the existing Starchild character (two sheets). Dates:
+  // ClickUp order created 2026-08-16, release due 2026-10-23 (the YouTube
+  // premiere is scheduled, the upload is listed on the channel but not public
+  // on 2026-10-16). Title and card follow the label's own upload title.
+  { on: true, record: {
+    slug: 'supergirl', id: 'LJlX5L_cDVs', title: 'Super Girl', artist: 'Divi Roxx Kids',
+    ordered: '2026-08-16', released: '2026-10-23',
+    kit: [
+      { type: 'yt', n: 1 },
+      { type: 'pack', ui: 'reels', n: 4, unit: 'cuts', items: [
+        { poster: '/kit/rollout/supergirl-promo-1.webp', label: 'Teaser' },
+        { poster: '/kit/rollout/supergirl-promo-2.webp', label: 'Teaser, with lyrics' },
+        { poster: '/kit/rollout/supergirl-promo-3.webp', label: 'Promo, Out Now' },
+      ] },
+      { type: 'ab', n: 7, items: ['/kit/rollout/supergirl-thumb-1.webp', '/kit/rollout/supergirl-thumb-2.webp', '/kit/rollout/supergirl-thumb-3.webp'] },
+    ],
+    reel: { account: 'Divi Roxx Kids', avatar: '/channels/divi-roxx-kids.jpg', caption: 'Super Girl, out now', audio: 'Divi Roxx Kids · Super Girl' },
+  }, story: {
+    input: 'song+images', files: ['master.wav', '2 sheets'],
+    inputImages: ['/kit/rollout/supergirl-sheet-1.webp', '/kit/rollout/supergirl-sheet-2.webp'], inputCount: 3,
+    boards: [
+      { img: '/kit/rollout/supergirl-board-a.webp', palette: ['#6a3fc0', '#ff5fa2', '#ffd23f', '#2fb6c8', '#f6f1ff'], source: 'delivery', label: 'Mood board' },
+      { img: '/kit/rollout/supergirl-board-b.webp', palette: ['#7b4fcf', '#ffcf5a', '#2b1b3d', '#c9a3ff', '#f1ede8'], source: 'delivery', label: 'Character' },
+    ],
+    // No pick: one costume was designed from the reference; the label approved it.
+    preview: { video: '/kit/rollout/supergirl-preview.mp4', poster: '/kit/rollout/supergirl-preview.webp' },
+    note: 'Love it. Can the cape catch more light in the chorus?', noteSource: 'illustrative',
+    change: { weight: ['500', '800'], swatch: ['#6a3fc0', '#ff5fa2'] },
+  } },
 ];

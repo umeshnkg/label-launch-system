@@ -43,6 +43,15 @@ test('resolveProject + validateProject: the Paradise entry is valid and lists it
   assert.deepEqual(validateProject(p), []);
 });
 
+test('resolveProject: record.thumb overrides the YouTube thumbnail (premiere not public yet)', () => {
+  const base = resolveProject(ROLLOUT[0], deps);
+  const record = { ...FEATURED.find((x) => x.slug === 'paradise'), thumb: '/kit/rollout/x-thumb-1.webp' };
+  const p = resolveProject({ record, story: ROLLOUT[0].story }, deps);
+  assert.equal(p.thumb, '/kit/rollout/x-thumb-1.webp');
+  assert.equal(base.thumb, '/thumbs/sf4xhkoMCvw.webp');
+  assert.ok(p.assets.includes('/kit/rollout/x-thumb-1.webp'));
+});
+
 test('validateProject rejects lines that would wrap at 360 px', () => {
   const p = resolveProject(ROLLOUT[0], deps);
   const bad = { ...p, notification: { ...p.notification, line2: 'HBz x 2 Engel & Charlie, Erinner mich (Official)' } };
