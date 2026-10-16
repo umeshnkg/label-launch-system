@@ -42,10 +42,12 @@ const errors = [];
 
 async function newPage(b) {
   const page = await b.newPage();
+  // A navigation mid-load aborts the previous page's videos, and the browser's
+  // disk cache can hiccup under many loads; neither is a failure of the site.
+  const noise = (t) => /ERR_ABORTED|ERR_CACHE_/.test(t);
   page.on('pageerror', (e) => errors.push(String(e)));
-  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-  // A navigation mid-load aborts the previous page's videos; that is not a failure.
-  page.on('requestfailed', (r) => { if (r.failure()?.errorText !== 'net::ERR_ABORTED') errors.push('REQFAIL ' + r.url()); });
+  page.on('console', (m) => { if (m.type() === 'error' && !noise(m.text())) errors.push(m.text()); });
+  page.on('requestfailed', (r) => { if (!noise(r.failure()?.errorText || '')) errors.push('REQFAIL ' + r.url() + ' ' + (r.failure()?.errorText || '')); });
   return page;
 }
 const beatOf = (page) => page.evaluate(() => document.querySelector('.rl')?.dataset.beat ?? null);
