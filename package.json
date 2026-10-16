@@ -11,9 +11,12 @@
     "prebuild": "npm run gen",
     "build": "vite build",
     "preview": "vite preview --port 4180",
-    "shoot": "node scripts/shoot.mjs"
+    "shoot": "node scripts/shoot.mjs",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "shoot:rollout": "node scripts/shoot-rollout.mjs"
   },
   "devDependencies": {
+    "puppeteer-core": "^24.43.1",
     "vite": "^8.0.16",
     "wrangler": "^3.0.0"
   }
