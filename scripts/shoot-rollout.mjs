@@ -86,10 +86,11 @@ async function beats(b) {
         }
         return res;
       }, beat);
-      check(Math.abs(r.ratio - 16 / 9) < 0.02, `${beat}@${tag}: stage ratio ${r.ratio.toFixed(3)} is not 16:9`);
+      const want = tag === 'd' ? 2 : 16 / 9;   // 2:1 on desktop, 16:9 on phones
+      check(Math.abs(r.ratio - want) < 0.02, `${beat}@${tag}: stage ratio ${r.ratio.toFixed(3)} is not ${tag === 'd' ? '2:1' : '16:9'}`);
       check(r.wraps.length === 0, `${beat}@${tag}: ${r.wraps.join(', ')}`);
       if (beat === 'delivered') {
-        check(r.okText === 'Approve', `delivered@${tag}: button reads "${r.okText}", expected "Approve"`);
+        check(r.okText === 'Download', `delivered@${tag}: button reads "${r.okText}", expected "Download"`);
         check(r.chkVisible === 0, `delivered@${tag}: ${r.chkVisible} check marks visible`);
       }
       const hero = await page.$('.hero');
@@ -130,7 +131,7 @@ async function behaviour(b) {
   check(started, 'advance: the stage never started');
   if (started) {
     const t0 = Date.now();
-    const expect = [[1000, 'notification'], [4000, 'directions'], [9000, 'preview'], [15000, 'delivered']];
+    const expect = [[1000, 'notification'], [6500, 'directions'], [11500, 'preview'], [17500, 'delivered']];
     for (const [ms, beat] of expect) {
       await sleep(Math.max(0, t0 + ms - Date.now()));
       const got = await beatOf(page);
@@ -146,19 +147,19 @@ async function behaviour(b) {
     await scrollToStage(page);
     await page.waitForSelector('.rl[data-beat="notification"]', { timeout: 8000 });
     const t1 = Date.now();
-    await sleep(Math.max(0, t1 + 2150 - Date.now()));
+    await sleep(Math.max(0, t1 + 4450 - Date.now()));
     const press = await page.evaluate(() => {
       const s = document.querySelector('.rl').getBoundingClientRect(), n = document.querySelector('.rl-ntf').getBoundingClientRect();
       return { pressed: document.querySelector('.rl-ntf').classList.contains('is-pressed'), dx: Math.abs((n.left + n.width / 2) - (s.left + s.width / 2)) / s.width };
     });
-    check(press.pressed, 'press: notification is not in its pressed state at 2.15 s');
+    check(press.pressed, 'press: notification is not in its pressed state at 4.45 s');
     check(press.dx < 0.02, `press: notification centre is off by ${(press.dx * 100).toFixed(1)}% of the stage while pressed`);
-    await sleep(Math.max(0, t1 + 10200 - Date.now()));
+    await sleep(Math.max(0, t1 + 12700 - Date.now()));
     const pin = await page.evaluate(() => {
       const scr = document.querySelector('.rl-preview__scr').getBoundingClientRect(), p = document.querySelector('.rl-pin').getBoundingClientRect();
       return { opacity: getComputedStyle(document.querySelector('.rl-pin')).opacity, typing: (document.querySelector('.rl-note__txt').textContent || '').length > 3, x: (p.left + p.width / 2 - scr.left) / scr.width, y: (p.top + p.height / 2 - scr.top) / scr.height };
     });
-    check(pin.typing, 'pin: the note is not typing at 10.2 s');
+    check(pin.typing, 'pin: the note is not typing at 12.7 s');
     check(pin.opacity === '1', `pin: pin is not visible while the note types (opacity ${pin.opacity})`);
     check(Math.abs(pin.x - 0.58) < 0.04 && Math.abs(pin.y - 0.6) < 0.06, `pin: pin sits at ${(pin.x * 100).toFixed(0)}% / ${(pin.y * 100).toFixed(0)}%, the cursor clicked at 58% / 60%`);
     const playing = await page.evaluate(() => { const v = document.querySelector('.rl-preview video'); return v && !v.paused; });
@@ -189,7 +190,7 @@ async function behaviour(b) {
     const projects = await page.evaluate(() => Number(document.querySelector('[data-rollout]')?.dataset.projects || 0));
     if (projects > 1) check(after !== before, `skip: project did not change (${before} → ${after})`);
     // Keyboard: the hidden real button skips too.
-    await sleep(3000);
+    await sleep(5500);
     check((await beatOf(page)) === 'directions', 'skip: round did not continue after the tap');
     await page.focus('.rl-skip');
     await page.keyboard.press('Enter');
@@ -215,7 +216,7 @@ async function behaviour(b) {
     }));
     check(r.cursors === 0, `reduced motion: ${r.cursors} cursors on`);
     check(r.next, 'reduced motion: no .rl-next button');
-    check(r.approved, 'reduced motion: kit Approve is not in the approved state');
+    check(r.approved, 'reduced motion: kit Download is not in the done state');
     if (r.next) {
       await page.click('.rl-next'); await sleep(300);
       const r2 = await page.evaluate(() => ({ stages: document.querySelectorAll('.rl').length, beat: document.querySelector('.rl')?.dataset.beat }));
@@ -239,9 +240,9 @@ async function behaviour(b) {
   check(sd, 'save-data: the stage never started');
   if (sd) {
     const t0 = Date.now();
-    await sleep(Math.max(0, t0 + 8000 - Date.now()));
+    await sleep(Math.max(0, t0 + 10500 - Date.now()));
     const tc1 = await page.evaluate(() => document.querySelector('.rl-tc')?.textContent);
-    await sleep(Math.max(0, t0 + 10000 - Date.now()));
+    await sleep(Math.max(0, t0 + 12500 - Date.now()));
     const tc2 = await page.evaluate(() => document.querySelector('.rl-tc')?.textContent);
     // Only the hero's clips count; the rest of the homepage autoplays its own videos.
     const previewSrc = await page.evaluate(() => document.querySelector('.rl-preview video')?.dataset.src || '');

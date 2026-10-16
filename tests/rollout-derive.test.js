@@ -7,8 +7,10 @@ import { YT_CARDS, REELS } from '../src/data.js';
 
 const deps = { FEATURED, YT_CARDS, REELS };
 
-test('releaseHorizon: Paradise is 6 weeks; short gaps are days; missing is Date set', () => {
-  assert.equal(releaseHorizon('2025-02-21', '2025-04-03'), 'In 6 weeks');
+test('releaseHorizon: over 3 weeks is capped (null); short gaps are days; missing is Date set', () => {
+  assert.equal(releaseHorizon('2025-02-21', '2025-04-03'), null);
+  assert.equal(releaseHorizon('2025-03-01', '2025-03-15'), 'In 2 weeks');
+  assert.equal(releaseHorizon('2025-03-01', '2025-03-22'), 'In 3 weeks');
   assert.equal(releaseHorizon('2026-09-01', '2026-09-10'), 'In 9 days');
   assert.equal(releaseHorizon('2026-09-01', '2026-09-02'), 'In 1 day');
   assert.equal(releaseHorizon(undefined, '2026-09-02'), 'Date set');
@@ -18,7 +20,7 @@ test('releaseHorizon: Paradise is 6 weeks; short gaps are days; missing is Date 
 test('notificationFor: heading follows the input level, chips end with the horizon, icon follows the input', () => {
   const n = notificationFor({ artist: 'LUNAX ft. CERES', title: 'Paradise', ordered: '2025-02-21', released: '2025-04-03' }, { input: 'song+images', files: ['master.wav', '6 photos'], inputImages: ['/a.webp', '/b.webp'], inputCount: 7 });
   assert.equal(n.heading, 'New track + images'); assert.equal(n.line2, 'LUNAX ft. CERES, Paradise');
-  assert.deepEqual(n.chips, ['master.wav', '6 photos', 'In 6 weeks']);
+  assert.deepEqual(n.chips, ['master.wav', '6 photos', null]);   // over 3 weeks: the project list fills it
   assert.deepEqual(n.icon, { kind: 'stack', images: ['/a.webp', '/b.webp'], count: 7 });
   assert.equal(notificationFor({ artist: 'A', title: 'B' }, { input: 'song', files: [] }).heading, 'New track');
   const c = notificationFor({ artist: 'A', title: 'B', cover: '/c.webp' }, { input: 'song+cover', files: [] });
@@ -91,4 +93,7 @@ test('an unpublished record gets a master card, needs no YT_CARDS entry, and kee
 
 test('every active project validates', () => {
   for (const p of activeProjects(ROLLOUT, deps)) assert.deepEqual(validateProject(p), [], p.slug);
+  // The release-date tag never goes past 3 weeks; capped projects alternate 2 and 3 weeks.
+  const tags = activeProjects(ROLLOUT.map((e) => ({ ...e, on: true })), deps).map((p) => p.notification.chips.at(-1));
+  for (const t of tags) assert.ok(t === 'Date set' || /^In (\d+ days?|[1-3] weeks?)$/.test(t), t);
 });

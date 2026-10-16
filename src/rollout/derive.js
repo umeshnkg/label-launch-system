@@ -4,21 +4,36 @@
 const DAY = 86400000;
 const parse = (iso) => (iso && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)) : NaN);
 
-/* The one red tag on the notification: real or absent, never invented. */
+/* The one red tag on the notification. The real gap when it is 3 weeks or
+   less; a longer gap returns null and the project list fills it with the
+   studio's usual 2 or 3 weeks, alternating (Umesh, 2026-10-16: never more). */
+export const HORIZON_CAP_DAYS = 21;
 export function releaseHorizon(ordered, released) {
   const a = parse(ordered), b = parse(released);
   if (Number.isNaN(a) || Number.isNaN(b)) return 'Date set';
   const days = Math.round((b - a) / DAY);
   if (days < 1) return 'Date set';
+  if (days > HORIZON_CAP_DAYS) return null;
   if (days <= 13) return `In ${days} day${days === 1 ? '' : 's'}`;
   const weeks = Math.round(days / 7);
   return `In ${weeks} week${weeks === 1 ? '' : 's'}`;
 }
 
-const HEADINGS = { song: 'New track', 'song+cover': 'New track + cover art', 'song+images': 'New track + images' };
+const CAPPED_HORIZONS = ['In 2 weeks', 'In 3 weeks'];
+/* Give every over-the-cap project 2 or 3 weeks, alternating through the rotation. */
+function alternateHorizons(list) {
+  let k = 0;
+  for (const p of list) {
+    const chips = p.notification?.chips;
+    if (chips && chips.at(-1) === null) chips[chips.length - 1] = CAPPED_HORIZONS[k++ % 2];
+  }
+  return list;
+}
+
+const HEADINGS = { song: 'New track', 'song+cover': 'New track + cover art', 'song+images': 'New track + images', 'song+photo': 'New track + artist photo' };
 
 export function notificationFor(record, story) {
-  const kind = story.input === 'song+cover' ? 'cover' : story.input === 'song+images' ? 'stack' : 'song';
+  const kind = story.input === 'song+cover' ? 'cover' : (story.input === 'song+images' || story.input === 'song+photo') ? 'stack' : 'song';
   const images = kind === 'cover' ? [record.cover].filter(Boolean) : kind === 'stack' ? (story.inputImages || []).slice(0, 2) : [];
   return {
     heading: HEADINGS[story.input] || HEADINGS.song,
@@ -70,7 +85,7 @@ export function resolveProject(entry, { FEATURED, YT_CARDS, REELS }) {
     change: story.change, tiles, hasCard: unpublished || !!card,
   };
   const urls = [
-    p.thumb, p.avatar, ...notification.icon.images, ...p.boards.map((b) => b.img),
+    p.thumb, p.avatar, ...notification.icon.images, ...p.boards.map((b) => b.img), ...p.boards.map((b) => b.from).filter(Boolean),
     p.preview?.video, p.preview?.poster,
     ...tiles.reels.map((t) => t.poster), ...tiles.verticals.map((t) => t.poster), ...tiles.thumbs, tiles.banner, tiles.reel?.avatar,
   ].filter(Boolean);
@@ -104,12 +119,12 @@ export function validateProject(p) {
 
 /* Strict: the tests and the budget script use it; one bad entry fails the build. */
 export function activeProjects(list, deps) {
-  return list.filter((e) => e.on).map((e) => {
+  return alternateHorizons(list.filter((e) => e.on).map((e) => {
     const p = resolveProject(e, deps);
     const problems = validateProject(p);
     if (problems.length) throw new Error(`rollout: ${p.slug}: ${problems.join('; ')}`);
     return p;
-  });
+  }));
 }
 
 /* Lenient: the live page uses it; a bad entry is logged and skipped, the rest play. */
@@ -125,5 +140,5 @@ export function safeProjects(list, deps) {
       console.error(err && err.message ? err.message : String(err));
     }
   }
-  return out;
+  return alternateHorizons(out);
 }

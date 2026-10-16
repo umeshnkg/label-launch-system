@@ -4,12 +4,16 @@
 // An entry is either { slug } (facts pulled from FEATURED in releases.js) or
 // { record } (a project with no case page; same fields as a FEATURED entry).
 // `story` is what the hero shows that the case page does not:
-//   input        'song' | 'song+cover' | 'song+images'  (the notification icon)
-//   files        short chips on the notification (never let a line wrap at 360 px:
+//   input        'song' | 'song+cover' | 'song+images' | 'song+photo'  (the notification icon)
+//   files        what the client actually sent: the audio file plus a plain
+//                label for any assets ('Cover artwork', '6 photos', 'Artist photo').
+//                Never list something we made. (never let a line wrap at 360 px:
 //                the derive test enforces heading ≤ 24, line2 ≤ 34, chips ≤ 30 chars)
 //   inputImages  1 or 2 photos fanned behind the icon when input is song+images
 //   inputCount   the red file count on that icon
-//   boards       2 to 4 real boards from the treatment or delivery, with palette
+//   boards       2 to 4 real boards from the treatment or delivery, with palette;
+//                `from` = the client's file a board was built from (shown as an
+//                inset with an arrow, e.g. the cover the character came from)
 //   pick         index of the board the client chose; omit when they approved the look
 //   preview      the 4 to 6 s muted clip + poster under public/kit/rollout/
 //   note         the one-line client note (illustrative unless noteSource says a thread)
@@ -36,14 +40,17 @@ export const ROLLOUT = [
   } },
 
   // Super Girl (Divi Roxx Kids, IROXX). No case page, so the record lives here.
-  // Boards are the treatment's Moodboard and Character Design pages. The label
-  // sent the song with the existing Starchild character (two sheets). Dates:
+  // Input: the song and the Starchild Vol. I cover artwork (the painted
+  // Starchild in her purple hoodie; the file is the album cover published on
+  // divinityroxx.com). Boards: the treatment's Moodboard page and the superhero
+  // half of its Character Design page, which turned the cover's Starchild into
+  // Super Girl (Supergirl Video Treatment.pdf, pages 4 and 5). Dates:
   // ClickUp order created 2026-08-16, release due 2026-10-23 (the YouTube
   // premiere is scheduled, the upload is listed on the channel but not public
   // on 2026-10-16). Title and card follow the label's own upload title.
   { on: true, record: {
     slug: 'supergirl', id: 'LJlX5L_cDVs', title: 'Super Girl', artist: 'Divi Roxx Kids',
-    ordered: '2026-08-16', released: '2026-10-23',
+    ordered: '2026-08-16', released: '2026-10-23', cover: '/kit/rollout/supergirl-cover.webp',
     kit: [
       { type: 'yt', n: 1 },
       { type: 'pack', ui: 'reels', n: 4, unit: 'cuts', items: [
@@ -55,13 +62,12 @@ export const ROLLOUT = [
     ],
     reel: { account: 'Divi Roxx Kids', avatar: '/channels/divi-roxx-kids.jpg', caption: 'Super Girl, out now', audio: 'Divi Roxx Kids · Super Girl' },
   }, story: {
-    input: 'song+images', files: ['master.wav', '2 sheets'],
-    inputImages: ['/kit/rollout/supergirl-sheet-1.webp', '/kit/rollout/supergirl-sheet-2.webp'], inputCount: 3,
+    input: 'song+cover', files: ['master.wav', 'Cover art'],
     boards: [
-      { img: '/kit/rollout/supergirl-board-a.webp', palette: ['#6a3fc0', '#ff5fa2', '#ffd23f', '#2fb6c8', '#f6f1ff'], source: 'delivery', label: 'Mood board' },
-      { img: '/kit/rollout/supergirl-board-b.webp', palette: ['#7b4fcf', '#ffcf5a', '#2b1b3d', '#c9a3ff', '#f1ede8'], source: 'delivery', label: 'Character' },
+      { img: '/kit/rollout/supergirl-board-moodboard.webp', palette: ['#6a3fc0', '#ff5fa2', '#ffd23f', '#2fb6c8', '#f6f1ff'], source: 'treatment', label: 'Mood board' },
+      { img: '/kit/rollout/supergirl-board-character.webp', palette: ['#7b4fcf', '#ffcf5a', '#2b1b3d', '#c9a3ff', '#f1ede8'], source: 'treatment', label: 'Character', from: '/kit/rollout/supergirl-cover.webp' },
     ],
-    // No pick: one costume was designed from the reference; the label approved it.
+    // No pick: one superhero design was built from the cover; the label approved it.
     preview: { video: '/kit/rollout/supergirl-preview.mp4', poster: '/kit/rollout/supergirl-preview.webp' },
     note: 'Love it. Can the cape catch more light in the chorus?', noteSource: 'illustrative',
     change: { weight: ['500', '800'], swatch: ['#6a3fc0', '#ff5fa2'] },
@@ -108,8 +114,11 @@ export const ROLLOUT = [
   // design and the delivery's title, no channel, no YouTube badge. Set `id` to
   // the upload and drop `unpublished` and `thumb` when she posts it. Dates:
   // ClickUp order 2026-02-13, the
-  // song's release 2026-03-23. Boards: the treatment's Main Character and
-  // Style Frames pages (the PDF copies; replace with originals if Umesh has them).
+  // song's release 2026-03-23. Input: the song and one photo of Riki, the
+  // reference the cartoon character was drawn from (treatment page 3). Boards:
+  // the treatment's Main Character, Storyboard Graphics and Style Frames pages
+  // (Riki Lindhome - Bio Dad - Lyric Video Treatment.pdf, pages 3 to 5). The
+  // treatment has no mood board page.
   { on: true, record: {
     slug: 'bio-dad', id: 'bio-dad-lyric', unpublished: true, title: 'Bio Dad', artist: 'Riki Lindhome',
     ordered: '2026-02-13', released: '2026-03-23',
@@ -125,12 +134,14 @@ export const ROLLOUT = [
     ],
     reel: { account: 'Riki Lindhome', avatar: '/channels/riki-lindhome.jpg', caption: 'Bio Dad, out now', audio: 'Riki Lindhome · Bio Dad' },
   }, story: {
-    input: 'song+cover', files: ['BioDad.wav', 'cover.jpg'],
+    input: 'song+photo', files: ['BioDad.wav', '1 photo'],
+    inputImages: ['/kit/rollout/biodad-ref-photo.webp'], inputCount: 2,
     boards: [
-      { img: '/kit/rollout/biodad-board-a.webp', palette: ['#d7262f', '#f5d36b', '#f7e3c6', '#2b2b2b', '#ffffff'], source: 'delivery', label: 'Character' },
-      { img: '/kit/rollout/biodad-board-b.webp', palette: ['#d7262f', '#ffd98a', '#6fa8dc', '#2b2b2b', '#fff7e6'], source: 'delivery', label: 'Style frames' },
+      { img: '/kit/rollout/biodad-board-character.webp', palette: ['#d7262f', '#f5d36b', '#f7e3c6', '#2b2b2b', '#ffffff'], source: 'treatment', label: 'Character', from: '/kit/rollout/biodad-ref-photo.webp' },
+      { img: '/kit/rollout/biodad-board-storyboard.webp', palette: ['#2b2b2b', '#8a8a8a', '#d7262f', '#f5d36b', '#ffffff'], source: 'treatment', label: 'Storyboard' },
+      { img: '/kit/rollout/biodad-board-styleframes.webp', palette: ['#d7262f', '#ffd98a', '#6fa8dc', '#2b2b2b', '#fff7e6'], source: 'treatment', label: 'Style frames' },
     ],
-    // No pick: the character and the four style frames were approved as the look.
+    // No pick: the character, storyboard and style frames were approved as the look.
     preview: { video: '/kit/rollout/biodad-preview.mp4', poster: '/kit/rollout/biodad-preview.webp' },
     note: 'This is great. Could the stork look a little more worried?', noteSource: 'illustrative',
     change: { weight: ['500', '800'], swatch: ['#f5d36b', '#d7262f'] },
@@ -187,8 +198,7 @@ export const ROLLOUT = [
       { type: 'ab', n: 11, items: ['/kit/rollout/rockitout-thumb-01.webp', '/kit/rollout/rockitout-thumb-02.webp', '/kit/rollout/rockitout-thumb-05.webp'] },
     ],
   }, story: {
-    input: 'song+images', files: ['master.wav', '2 sheets'],
-    inputImages: ['/kit/rollout/rockitout-sheet-1.webp', '/kit/rollout/rockitout-sheet-2.webp'], inputCount: 3,
+    input: 'song', files: ['master.wav'],
     boards: [
       { img: '/kit/rollout/rockitout-board-a.webp', palette: ['#A6E02F', '#FF8904', '#FF22BD', '#C22BFF', '#0FCBF5'], source: 'delivery', label: 'Mood board' },
       { img: '/kit/rollout/rockitout-costume-1.webp', palette: ['#FF8904', '#A6E02F', '#FF22BD', '#0FCBF5', '#C22BFF'], source: 'delivery', label: 'Costume A' },

@@ -27,7 +27,7 @@ function prefetch(project, saveData) {
 function applyUntil(stage, project, untilMs) {
   for (const cue of cuesFor(project)) {
     if (cue.at >= untilMs) break;
-    if (cue.type === 'video' || cue.type === 'cursor') continue;
+    if (cue.type === 'video' || cue.type === 'cursor' || cue.type === 'download') continue;
     applyCue(stage, cue);
   }
   // Pressed states release on a timer; settle them now.
@@ -80,9 +80,10 @@ export function mountRollout(root, {
   // The preview clip follows the round: it stops when the round pauses and
   // picks up again on resume (the cues restart it at the beat's start anyway).
   const video = () => stage?.querySelector('.rl-preview video');
-  const pause = () => { runner?.pause(); video()?.pause(); };
+  const pause = () => { runner?.pause(); video()?.pause(); stage?.classList.add('is-paused'); };
   const play = () => {
     if (!runner || destroyed || hidden || !inView) return;
+    stage?.classList.remove('is-paused');
     if (runner.state() === 'idle') runner.start();
     else if (runner.state() === 'paused') {
       runner.resume();
