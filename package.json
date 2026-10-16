@@ -13,7 +13,8 @@
     "preview": "vite preview --port 4180",
     "shoot": "node scripts/shoot.mjs",
     "test": "node --test \"tests/**/*.test.js\"",
-    "shoot:rollout": "node scripts/shoot-rollout.mjs"
+    "shoot:rollout": "node scripts/shoot-rollout.mjs",
+    "rollout:budget": "node scripts/rollout-budget.mjs"
   },
   "devDependencies": {
     "puppeteer-core": "^24.43.1",

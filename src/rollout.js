@@ -28,7 +28,7 @@ export const ROLLOUT = [
       { img: '/kit/paradise-styleframes.webp', palette: ['#3ebfd5', '#09212b', '#fe3864', '#f5f3ef', '#f6e80b'], source: 'delivery', label: 'Style frames' },
     ],
     // No pick: Beat Dealer approved the mood board and style frames together.
-    preview: { video: '/kit/paradise-firstcut.mp4', poster: '/kit/paradise-firstcut-poster.webp' },
+    preview: { video: '/kit/rollout/paradise-preview.mp4', poster: '/kit/rollout/paradise-preview.webp' },
     note: 'This is cool. Can we try a bolder font and the red for the chorus?', noteSource: 'illustrative',
     change: { weight: ['500', '800'], swatch: ['#3ebfd5', '#fe3864'] },
     // Delivered Apple Motion Cover (2 in Dropbox); shown in the hero only, the case page leaves them out.
