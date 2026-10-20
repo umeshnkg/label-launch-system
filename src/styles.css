@@ -111,9 +111,9 @@ em { font-style: italic; font-weight: 500; }
   margin: 26px auto 0; max-width: 1080px;
   font-size: clamp(40px, 6.3vw, 72px); letter-spacing: -0.04em; line-height: 1.0; font-weight: 600; text-wrap: balance;
 }
-/* One line per thought on desktop; the span flows inline on phones (the space before <em> must stay in the markup). */
+/* One line per thought at every width: the line always breaks after the comma, on phones too
+   (the space before <em> must stay in the markup so text copies as one sentence). */
 .hero h1 .h1-line { display: block; }
-@media (max-width: 640px) { .hero h1 .h1-line { display: inline; } }
 .hero .lede { margin: 22px auto 0; max-width: 680px; text-wrap: pretty; }
 .nobr { white-space: nowrap; }
 .hero__cta { display: flex; gap: 12px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
