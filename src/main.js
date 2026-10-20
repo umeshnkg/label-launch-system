@@ -14,7 +14,8 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
 /* Hero quote stack: three messages drawn like an inbox, the top one readable
    and two peeking out below. On its own it crossfades to the next one (hold
-   scales with length; waits while hovered or while the tab is hidden). The top
+   scales with length; waits while hovered with a mouse, while keyboard focus
+   is on it, or while the tab is hidden). The top
    message can be dragged: a sideways swipe (or ← → with it focused) flings it
    off and the next rises from the pile; up or down springs back. Vertical
    finger moves still scroll the page (touch-action: pan-y). Reduced motion:
@@ -51,7 +52,7 @@ if (heroQuotes && HERO_QUOTES.length >= 3) {
   const stack = document.createElement('div');
   stack.className = 'hq__stack';
   heroQuotes.appendChild(stack);
-  let i = 0, timer, busy = false, hover = false;
+  let i = 0, timer, busy = false, hover = false, focused = false;
   const hold = (t) => Math.min(4200 + text(t).length * 42, 8500);
   const make = (k, depth) => {
     const d = document.createElement('div');
@@ -64,7 +65,7 @@ if (heroQuotes && HERO_QUOTES.length >= 3) {
   const schedule = () => {
     clearTimeout(timer);
     if (reduced) return;
-    timer = setTimeout(() => { if (!hover && !document.hidden) advance(0); else schedule(); }, hold(HERO_QUOTES[i]));
+    timer = setTimeout(() => { if (!hover && !focused && !document.hidden) advance(0); else schedule(); }, hold(HERO_QUOTES[i]));
   };
   // dir 0 = fade out in place (the timer); -1 / +1 = fling sideways (a swipe or an arrow key).
   function advance(dir, dy = 0) {
@@ -118,8 +119,14 @@ if (heroQuotes && HERO_QUOTES.length >= 3) {
   }
   stack.append(make(i + 2, 3), make(i + 1, 2), make(i, 1));
   bind(top());
-  heroQuotes.addEventListener('mouseenter', () => { hover = true; });
-  heroQuotes.addEventListener('mouseleave', () => { hover = false; });
+  // Only a real mouse pauses on hover: a tap fires an emulated enter with no
+  // leave until the next tap elsewhere, which would stop the stack for good.
+  heroQuotes.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hover = true; });
+  heroQuotes.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hover = false; });
+  // Keyboard focus pauses too, so a reader is not moved on mid-quote (WCAG 2.2.2).
+  // :focus-visible keeps a tap or click (which also focuses the card) from pausing it.
+  heroQuotes.addEventListener('focusin', (e) => { focused = e.target.matches(':focus-visible'); });
+  heroQuotes.addEventListener('focusout', (e) => { if (!heroQuotes.contains(e.relatedTarget)) focused = false; });
   schedule();
 }
 
