@@ -690,9 +690,9 @@ em { font-style: italic; font-weight: 500; }
 /* The Rollout hero on desktop, same order as phones: pill, headline, lede,
    the CTA, then the stage. The stage is sized from the window height (its
    height = (100svh - the rest of the hero) / --rollout-k, the stage ratio:
-   2.4 for version 2, 2 for version 1) so pill, headline, lede, CTA and the
+   2.6 for version 2, 2 for version 1) so pill, headline, lede, CTA and the
    whole stage fit without scrolling on a 13-inch MacBook in Chrome (1440 x 790
-   viewport; 2026-10-21), never below 480 px wide nor above 980. */
+   viewport; 2026-10-21), never below 660 px wide nor above 940. */
 @media (min-width: 641px) {
   .hero { padding-top: 84px; padding-bottom: 36px; }
   .hero .wrap { display: flex; flex-direction: column; align-items: center; }
@@ -700,7 +700,7 @@ em { font-style: italic; font-weight: 500; }
   .hero h1 { order: 2; margin-top: 16px; font-size: clamp(40px, min(6.3vw, 7.4svh), 72px); }
   .hero .lede { order: 3; margin-top: 12px; }
   .hero__cta { order: 4; margin-top: 20px; }
-  .hero__media { order: 5; margin: 22px auto 0; width: min(980px, 100%, max(480px, calc((100svh - 440px) * var(--rollout-k, 2)))); max-width: none; }
+  .hero__media { order: 5; margin: 22px auto 0; width: min(940px, 100%, max(660px, calc((100svh - 490px) * var(--rollout-k, 2)))); max-width: none; }
 }
 
 /* The Rollout hero on phones: pill, headline, lede, the 16:9 stage, then the
@@ -713,5 +713,6 @@ em { font-style: italic; font-weight: 500; }
   .hero h1 { order: 2; margin-top: 14px; font-size: clamp(30px, 9.4vw, 40px); }
   .hero .lede { order: 3; margin-top: 12px; font-size: 15px; line-height: 1.4; }
   .hero__cta { order: 4; margin-top: 16px; width: 100%; }
-  .hero__media { order: 5; margin: 18px 0 0; width: 100%; }
+  /* The stage runs nearly edge to edge on phones: 8 px into each side gutter. */
+  .hero__media { order: 5; margin: 18px -8px 0; width: calc(100% + 16px); }
 }

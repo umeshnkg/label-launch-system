@@ -49,7 +49,7 @@ export function mountRollout(root, {
   if (!root || !n) return null;
   root.dataset.projects = String(n);
   // Version 1 was designed for a 2:1 stage (rollout.css sets 2.4:1 for version 2).
-  if (version !== 2 && typeof document !== 'undefined') { document.documentElement.style.setProperty('--rollout-ar', '2 / 1'); document.documentElement.style.setProperty('--rollout-k', '2'); }
+  if (version !== 2 && typeof document !== 'undefined') { document.documentElement.style.setProperty('--rollout-ar', '2 / 1'); document.documentElement.style.setProperty('--rollout-k', '2'); document.documentElement.style.setProperty('--rollout-ar-m', '16 / 9'); }
 
   let idx = 0, stage = null, runner = null, swapping = false, inView = false, destroyed = false;
   let hidden = typeof document !== 'undefined' && document.hidden;

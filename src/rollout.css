@@ -8,11 +8,13 @@
 .rollout { position: relative; aspect-ratio: 2 / 1; }
 .rollout > .rl { position: absolute; inset: 0; }
 @media (max-width: 640px) { .rollout, .rollout > .rl { aspect-ratio: 16 / 9; } }
-/* Version 2 runs a wider, shorter stage on desktop (the kit is one row): 2.4:1.
+/* Version 2 runs a wider, shorter stage on desktop (the kit is one row): 2.6:1.
    --rollout-k is the same ratio as a number, for the hero's width formula in
    styles.css. The mount puts both back to 2:1 when version 1 plays. */
-:root { --rollout-ar: 2.4 / 1; --rollout-k: 2.4; }
+:root { --rollout-ar: 2.6 / 1; --rollout-k: 2.6; --rollout-ar-m: 3 / 2; }
 @media (min-width: 641px) { .rollout { aspect-ratio: var(--rollout-ar); } .rollout > .rl { aspect-ratio: auto; } }
+/* Phones: version 2 gets a taller 3:2 stage so its pieces can be bigger. */
+@media (max-width: 640px) { .rollout { aspect-ratio: var(--rollout-ar-m); } .rollout > .rl { aspect-ratio: auto; } }
 .rl {
   position: relative; container-type: inline-size; aspect-ratio: 2 / 1; overflow: hidden;
   background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
@@ -398,6 +400,53 @@
   .rl-file__ico { width: max(42px, 12cqw); }
   .rl-file__n { top: -6%; right: -12%; }
   .rl-send__plus { height: max(42px, 12cqw); font-size: 18px; }
+}
+
+/* ---------- Version 2, tightened (2026-10-21) ----------
+   Less empty room under the buttons and around the step bars, narrower side
+   margins, pieces scaled up so they keep their size on the narrower stage.
+   Checked at 1440x790, 1470x846, 1366x657, 1536x730, 1920x970, 1024x768,
+   820x1180, 430x932, 390x844 and 360x780. */
+@container (min-width: 601px) {
+  .rl[data-v="2"] .rl-send, .rl[data-v="2"] .rl-boards, .rl[data-v="2"] .rl-kit { inset: 0 0 5.6cqw; }
+  .rl[data-v="2"] .rl-steps { left: 3.4cqw; right: 3.4cqw; bottom: 1.7cqw; gap: 1.2cqw; }
+  .rl[data-v="2"] .rl-step__t { margin-top: .55cqw; }
+  .rl[data-v="2"] .rl-send { gap: 1.9cqw; padding: 2cqw 3cqw; }
+  .rl[data-v="2"] .rl-file { width: max(72px, 15cqw); }
+  .rl[data-v="2"] .rl-file__ico, .rl[data-v="2"] .rl-send__plus { width: max(46px, 11cqw); }
+  .rl[data-v="2"] .rl-send__plus { width: auto; height: max(46px, 11cqw); }
+  .rl[data-v="2"] .rl-file__nm { font-size: max(10px, 1.45cqw); }
+  .rl[data-v="2"] .rl-send__date { font-size: max(10px, 1.35cqw); }
+  .rl[data-v="2"] .rl-send__btn { font-size: max(12px, 1.7cqw); }
+  .rl[data-v="2"] .rl-boards { gap: 2.4cqw; padding: 2.4cqw 3cqw; }
+  .rl[data-v="2"] .rl-board { width: min(32cqw, calc((94cqw - (var(--n) - 1) * 2.5cqw) / var(--n))); }
+  .rl[data-v="2"] .rl-board__nm { font-size: max(11px, 1.45cqw); }
+  .rl[data-v="2"] .rl-ok { font-size: max(10px, 1.4cqw); }
+  .rl[data-v="2"] .rl-kit__row { gap: 2.6cqw; }
+  .rl[data-v="2"] .rl-stack { width: 18cqw; height: 19cqw; }
+  .rl[data-v="2"] .rl-thumbs { width: 13cqw; margin-right: 4.7cqw; }
+}
+@container (max-width: 600px) {
+  .rl[data-v="2"] .rl-send, .rl[data-v="2"] .rl-boards, .rl[data-v="2"] .rl-kit { inset: 0 0 10cqw; }
+  .rl[data-v="2"] .rl-steps { left: 4cqw; right: 4cqw; bottom: 5.4cqw; gap: 1.4cqw; }
+  .rl[data-v="2"] .rl-step__t { top: calc(100% + 1.2cqw); font-size: max(10px, 3cqw); }
+  .rl[data-v="2"] .rl-send { gap: 2.8cqw; padding: 3cqw; }
+  .rl[data-v="2"] .rl-send__files { gap: 2cqw; }
+  .rl[data-v="2"] .rl-file { width: 30cqw; gap: 1cqw; }
+  .rl[data-v="2"] .rl-file__ico { width: 16cqw; }
+  .rl[data-v="2"] .rl-send__plus { height: 16cqw; font-size: max(18px, 5cqw); }
+  .rl[data-v="2"] .rl-file__nm { font-size: max(10px, 3.2cqw); }
+  .rl[data-v="2"] .rl-send__date { font-size: max(10px, 3cqw); }
+  .rl[data-v="2"] .rl-send__btn { font-size: max(12px, 3.6cqw); }
+  .rl[data-v="2"] .rl-ok { font-size: max(11px, 3.2cqw); }
+  .rl[data-v="2"] .rl-boards { gap: 3.5cqw; padding: 3cqw; }
+  .rl[data-v="2"] .rl-board__nm { font-size: max(10px, 3cqw); }
+  .rl[data-v="2"] .rl-kit { gap: 3cqw; padding: 2cqw 3cqw; }
+  .rl[data-v="2"] .rl-kit__row { gap: 2.5cqw; }
+  .rl[data-v="2"] .rl-kit__mid { width: 36cqw; }
+  .rl[data-v="2"] .rl-ytc__meta b { font-size: max(9px, 2.6cqw); }
+  .rl[data-v="2"] .rl-ytc__meta em { font-size: max(8px, 2.2cqw); }
+  .rl[data-v="2"] .rl-stack { width: 24cqw; height: 30cqw; }
 }
 
 /* Controls the mount adds: a hidden-but-focusable skip for keyboards, and the
