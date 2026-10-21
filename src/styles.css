@@ -122,6 +122,24 @@ em { font-style: italic; font-weight: 500; }
    (too much in the hero; markup in git history); the logo marquee below
    carries the labels. */
 .proof { display: grid; grid-template-columns: minmax(0, 460px); justify-content: center; max-width: 720px; margin: 34px auto 0; text-align: left; }
+/* Since 2026-10-20 the stack has its own section between the spotlight and the
+   case studies (Umesh: people should actually read it), so it gets room: a
+   centred head, a wider message and bigger type (--hq-scale feeds the inline
+   font size main.js sets). */
+.testi { padding: 136px 0 144px; }
+.testi__head { margin: 0 auto 56px; text-align: center; }
+.testi .proof { grid-template-columns: minmax(0, 580px); margin-top: 0; }
+.testi .hq { --hq-scale: 1.22; }
+.testi .hq__msg { padding: 20px 22px 21px; gap: 12px; border-radius: 20px; }
+.testi .hq__ava { width: 38px; height: 38px; font-size: 13px; }
+.testi .hq__l1 { font-size: 14.5px; }
+.testi .hq__l2 { font-size: 13.5px; }
+@media (max-width: 640px) {
+  .testi { padding: 88px 0 96px; }
+  .testi__head { margin-bottom: 36px; }
+  .testi .hq { --hq-scale: 1.1; }
+  .testi .hq__msg { padding: 16px 16px 17px; }
+}
 /* Hero quote stack: three messages, the top one readable, two peeking below.
    The highlighter is --mark (yellow): Umesh's call on 2026-10-17, the one
    exception to the no-yellow rule. Motion lives in main.js; these classes are
@@ -679,9 +697,8 @@ em { font-style: italic; font-weight: 500; }
   .hero .pill { order: 1; }
   .hero h1 { order: 2; margin-top: 18px; font-size: clamp(40px, min(6.3vw, 8.2svh), 72px); }
   .hero .lede { order: 3; margin-top: 14px; }
-  .hero__media { order: 4; margin: 26px auto 0; width: min(980px, 100%, max(480px, calc((100svh - 480px) * 2))); max-width: none; }
-  .hero__cta { order: 5; margin-top: 22px; }
-  .proof { order: 6; margin-top: 30px; }
+  .hero__cta { order: 4; margin-top: 24px; }
+  .hero__media { order: 5; margin: 30px auto 0; width: min(980px, 100%, max(480px, calc((100svh - 480px) * 2))); max-width: none; }
 }
 
 /* The Rollout hero on phones: pill, headline, lede, the 16:9 stage, then the
@@ -693,7 +710,6 @@ em { font-style: italic; font-weight: 500; }
   .hero .pill { order: 1; }
   .hero h1 { order: 2; margin-top: 14px; font-size: clamp(30px, 9.4vw, 40px); }
   .hero .lede { order: 3; margin-top: 12px; font-size: 15px; line-height: 1.4; }
-  .hero__media { order: 4; margin: 16px 0 0; width: 100%; }
-  .hero__cta { order: 5; margin-top: 14px; width: 100%; }
-  .proof { order: 6; margin-top: 18px; width: 100%; }
+  .hero__cta { order: 4; margin-top: 16px; width: 100%; }
+  .hero__media { order: 5; margin: 18px 0 0; width: 100%; }
 }

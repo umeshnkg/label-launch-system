@@ -21,9 +21,10 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
    finger moves still scroll the page (touch-action: pan-y). Reduced motion:
    no autoplay and no transitions; the swipe still works. */
 const heroQuotes = $('[data-hero-quotes]');
-if (heroQuotes && HERO_QUOTES.length >= 3) {
+const HQ = HERO_QUOTES.filter((t) => !t.off); // off: true = disabled after Umesh's review
+if (heroQuotes && HQ.length >= 3) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const N = HERO_QUOTES.length;
+  const N = HQ.length;
   const text = (t) => t.q.replace(/<\/?m>/g, '');
   const marked = (t) => esc(t.q).replace(/&lt;m&gt;/g, '<mark>').replace(/&lt;\/m&gt;/g, '</mark>');
   const initials = (n) => n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
@@ -46,7 +47,7 @@ if (heroQuotes && HERO_QUOTES.length >= 3) {
     : '';
   const html = (t) => {
     const w = who(t), n = text(t).length;
-    return `<div class="hq__hd"><span class="hq__ava${t.src === 'google' ? ' hq__ava--g' : ''}" aria-hidden="true">${initials(t.name)}</span><div class="hq__meta"><div class="hq__l1">${w.l1}</div><div class="hq__l2row"><div class="hq__l2">${w.l2}</div>${side(t)}</div></div></div><p class="hq__body${n <= 60 ? ' is-short' : ''}" style="font-size:${size(t)}px">${marked(t)}</p>`;
+    return `<div class="hq__hd"><span class="hq__ava${t.src === 'google' ? ' hq__ava--g' : ''}" aria-hidden="true">${initials(t.name)}</span><div class="hq__meta"><div class="hq__l1">${w.l1}</div><div class="hq__l2row"><div class="hq__l2">${w.l2}</div>${side(t)}</div></div></div><p class="hq__body${n <= 60 ? ' is-short' : ''}" style="font-size:calc(${size(t)}px * var(--hq-scale, 1))">${marked(t)}</p>`;
   };
 
   const stack = document.createElement('div');
@@ -58,14 +59,14 @@ if (heroQuotes && HERO_QUOTES.length >= 3) {
     const d = document.createElement('div');
     d.className = `hq__msg hq__msg--${depth}`;
     if (depth > 1) d.setAttribute('aria-hidden', 'true');
-    d.innerHTML = html(HERO_QUOTES[k % N]);
+    d.innerHTML = html(HQ[k % N]);
     return d;
   };
   const top = () => stack.lastElementChild;
   const schedule = () => {
     clearTimeout(timer);
     if (reduced) return;
-    timer = setTimeout(() => { if (!hover && !focused && !document.hidden) advance(0); else schedule(); }, hold(HERO_QUOTES[i]));
+    timer = setTimeout(() => { if (!hover && !focused && !document.hidden) advance(0); else schedule(); }, hold(HQ[i]));
   };
   // dir 0 = fade out in place (the timer); -1 / +1 = fling sideways (a swipe or an arrow key).
   function advance(dir, dy = 0) {
