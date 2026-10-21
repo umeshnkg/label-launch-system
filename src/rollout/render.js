@@ -2,7 +2,21 @@
 // to it. No timers here except the 400 ms "pressed" release.
 import '../rollout.css';
 import { esc, spotifyOverlay, reelsOverlay, appleOverlay } from '../overlays.js';
-import { BEATS } from './timeline.js';
+import { BEATS, BEATS_V2 } from './timeline.js';
+import { tilesV2 } from './derive.js';
+import { pickAudioIcon, pickImageIcon } from './version.js';
+
+const SEARCH = typeof location !== 'undefined' ? location.search : '';
+const AUDIO_KIND = pickAudioIcon(SEARCH);
+const IMAGE_KIND = pickImageIcon(SEARCH);
+
+/* A single image file (cover art, artist photo) as Finder shows it: on the macOS
+   page (filled, inset, or filled with a format strip) or as a bordered thumbnail. */
+function imageFile(src, pos, ext) {
+  if (IMAGE_KIND === 'thumb') return `<span class="rl-file__ico rl-file__ico--thumb">${imgAt(src, 'rl-file__im', pos)}</span>`;
+  const mode = IMAGE_KIND.slice(5);
+  return `<span class="rl-file__ico rl-file__ico--page"><span class="rl-page rl-page--img-${mode}">${imgAt(src, 'rl-page__img', pos)}${mode === 'fill' ? '' : `<em class="rl-page__ext">${esc(ext)}</em>`}</span></span>`;
+}
 
 const CURSOR = '<svg viewBox="0 0 14 18" aria-hidden="true"><path d="M1 1 L1 15 L4.6 11.6 L7.4 17 L9.6 16 L6.9 10.6 L12 10.6 Z"/></svg>';
 const BADGES = {
@@ -34,6 +48,14 @@ function steps() {
   </div>`;
 }
 
+// Version 2 has no preview step: three segments, timed on its own beats.
+const STEPS_V2 = STEPS.filter(([b]) => b !== 'preview');
+function stepsV2() {
+  return `<div class="rl-steps" data-n="${STEPS_V2.length}">${STEPS_V2.map(([beat, label]) => `
+    <div class="rl-step" data-step="${beat}" style="--d:${BEATS_V2[beat][1] - BEATS_V2[beat][0]}ms"><span class="rl-step__bar"><i></i></span><span class="rl-step__t">${label}</span></div>`).join('')}
+  </div>`;
+}
+
 const WAVE = '<span class="rl-ntf__wave">' + [4, 10, 7, 14, 5, 9, 4].map((h) => `<b style="--h:${h}"></b>`).join('') + '</span>';
 // Beat 1's images load with the page. Everything later carries data-src and is
 // hydrated by the mount after the page's load event, so the stage never
@@ -61,6 +83,74 @@ function notification(n) {
       <span class="rl-ntf__l2">${esc(n.line2)}</span>
       <span class="rl-ntf__l3">${chips}</span>
     </span>
+  </div>`;
+}
+
+// Version 2 draws nothing by hand: glyphs are Google's Material Symbols
+// (rounded, filled, @material-symbols/svg-500 0.48.0) and platform marks are
+// the official app icons, 120 px copies from Wikimedia Commons (public domain /
+// CC0) in public/kit/rollout/icons/.
+// Each glyph is the untouched file, painted in the text colour through a CSS mask.
+const MS = (name) => `<i class="rl-ms" style="--ms:url(/kit/rollout/icons/ms-${name}.svg)" aria-hidden="true"></i>`;
+const SEND = MS('send');
+const CAL = MS('calendar_today');
+const DL_MS = MS('download');
+// iTunes is the original vector (crisp at any size, 3.4 KB); the rest are 120 px PNGs.
+const ICON = (kind) => `/kit/rollout/icons/${kind}.${kind === 'mac-itunes' ? 'svg' : 'png'}`;
+
+/* Version 2's beat 1: what the client sends, drawn as big iOS-style file
+   icons with their names (the audio file first, then the cover or the photos,
+   stacked when there are several), the release tag under them and one green
+   Send. No mail window: the icons are the email. */
+const posStyle = (pos) => (pos ? ` style="object-position:${esc(pos)}"` : '');
+const imgAt = (src, cls, pos) => `<img src="${src}" alt="" class="${cls}"${posStyle(pos)} loading="eager" decoding="async" />`;
+
+function send(n) {
+  const icon = n.icon || { kind: 'song', images: [], count: null };
+  const focus = n.focus || [];
+  const files = n.chips.slice(0, -1);
+  const names = n.names && n.names.length === files.length ? n.names : files;
+  const release = n.chips.at(-1);
+  // The red count only when the entry gives a real file count (inputCount, audio included).
+  const photos = icon.kind === 'stack' && icon.count != null ? icon.count - 1 : 0;
+  const art = (name, i) => {
+    // The audio file: Apple's Music app icon, or the macOS Finder document page
+    // with the opening app's icon on it (version.js AUDIO_ICON, ?audio= to preview).
+    if (i === 0) {
+      const ext = ((/\.(\w{2,4})$/.exec(name) || [])[1] || 'audio').toUpperCase();
+      if (AUDIO_KIND === 'app') return `<span class="rl-file__ico rl-file__ico--app">${imgAt(ICON('apple'), 'rl-file__im')}</span>`;
+      // 'page-<app>[-sm]', 'page-blank', or a waveform kind ('page-wave',
+      // 'page-wave-pink', 'page-music-wave') drawn from the song's real loudness.
+      const kind = AUDIO_KIND.slice(5);
+      const small = kind.endsWith('-sm');
+      const wave = kind.includes('wave') && n.wave ? `<span class="rl-page__wave">${n.wave.map((h) => `<i style="--h:${h}"></i>`).join('')}</span>` : '';
+      const app = kind === 'music-wave' ? 'music' : kind.includes('wave') || kind === 'blank' ? null : kind.replace(/-sm$/, '');
+      const cls = ['rl-page', kind === 'blank' && 'rl-page--blank', wave && `rl-page--${kind}`].filter(Boolean).join(' ');
+      const appImg = app ? imgAt(ICON('mac-' + app), `rl-page__app${small ? ' rl-page__app--sm' : ''}`) : '';
+      return `<span class="rl-file__ico rl-file__ico--page"><span class="${cls}">${appImg}${wave}<em class="rl-page__ext">${esc(ext)}</em></span></span>`;
+    }
+    const imgExt = ((/\.(\w{2,4})$/.exec(names[i] || '') || [])[1] || 'jpeg').toUpperCase();
+    const single = icon.kind === 'cover' ? icon.images[0] : icon.kind === 'stack' && !n.clips && !n.sendImages && icon.images.length === 1 ? icon.images[0] : null;
+    if (single && IMAGE_KIND !== 'icon') return imageFile(single, focus[0], imgExt);
+    if (icon.kind === 'cover' && icon.images[0]) return `<span class="rl-file__ico rl-file__ico--img">${imgAt(icon.images[0], 'rl-file__im', focus[0])}</span>`;
+    if (icon.kind === 'stack' && icon.images.length) {
+      // sendImages are already framed on the face; inputImages need their focus.
+      const pics = n.sendImages ? n.sendImages.map((s, k) => imgAt(s, `rl-file__ph rl-file__ph--${k}`)).join('')
+        : icon.images.map((s, k) => imgAt(s, `rl-file__ph rl-file__ph--${k}`, focus[k])).join('');
+      // Video clips carry the camera mark in the corner, as iOS Photos does.
+      const vid = n.clips ? `<span class="rl-file__vid">${MS('videocam')}</span>` : '';
+      return `<span class="rl-file__ico rl-file__ico--stack${(n.sendImages || icon.images).length > 1 ? ' is-multi' : ''}">${pics}${vid}${photos > 1 ? `<span class="rl-file__n">${photos}</span>` : ''}</span>`;
+    }
+    return '<span class="rl-file__ico rl-file__ico--doc"></span>';
+  };
+  // A plus sits between files; it pops in with the file after it.
+  const tiles = files.map((f, i) => `${i ? `<span class="rl-send__plus" style="--i:${i}" aria-hidden="true">+</span>` : ''}
+      <div class="rl-file" data-f="${i}" style="--i:${i}">${art(f, i)}<span class="rl-file__nm">${esc(names[i])}</span></div>`).join('');
+  return `<div class="rl-send">
+    <div class="rl-send__files">${tiles}
+    </div>
+    <span class="rl-send__date" data-f="${files.length}" style="--i:${files.length}">${CAL}<span>Release</span><b>${esc(release)}</b></span>
+    <span class="rl-ok rl-send__btn" style="--i:${files.length + 1}">${SEND}<span class="rl-send__lbl">Send</span></span>
   </div>`;
 }
 
@@ -128,7 +218,8 @@ function kit(p) {
   </div>`;
 }
 
-export function renderProject(p) {
+export function renderProject(p, version = 1) {
+  if (version === 2) return renderProjectV2(p);
   const el = document.createElement('div');
   el.className = 'rl';
   el.dataset.slug = p.slug;
@@ -148,8 +239,43 @@ export function renderProject(p) {
   return el;
 }
 
+/* Version 2: the send instead of the notification, and no preview block (so
+   its clip is never fetched). */
+function renderProjectV2(p) {
+  const el = document.createElement('div');
+  el.className = 'rl';
+  el.dataset.slug = p.slug;
+  el.dataset.beat = '';
+  el.dataset.v = '2';
+  const chosen = (p.boards || [])[p.pick ?? (p.boards || []).length - 1];
+  el.dataset.palette = (chosen?.palette || []).join(',');
+  el.setAttribute('aria-hidden', 'true');
+  el.innerHTML = `
+    ${send(p.notification)}
+    ${boards(p.boards, p.pick)}
+    ${kit({ ...p, tiles: tilesV2(p) }).replace(DOWNLOAD, DL_MS)}
+    ${stepsV2()}
+    <div class="rl-cur rl-cur--studio">${CURSOR}<span class="rl-cur__tag">Studio</span></div>
+    <div class="rl-cur rl-cur--client">${CURSOR}<span class="rl-cur__tag">Label / Client</span></div>`;
+  // Platform tags become the official app icons.
+  el.querySelectorAll('.rl-bg').forEach((b) => {
+    const kind = (/rl-bg--(\w+)/.exec(b.className) || [])[1];
+    if (kind) b.innerHTML = `<img src="${ICON(kind)}" alt="" decoding="async" />`;
+  });
+  // The client's file beside the character: the person-framed crop, placed per board.
+  (p.boards || []).forEach((b, i) => {
+    const from = el.querySelector(`.rl-board[data-i="${i}"] .rl-board__from`);
+    if (!from) return;
+    if (b.fromCrop) from.querySelector('img').dataset.src = b.fromCrop;
+    if (b.fromPlace) from.dataset.place = b.fromPlace;
+  });
+  return el;
+}
+
 const TARGETS = { ntf: '.rl-ntf', boards: '.rl-boards', preview: '.rl-preview', kit: '.rl-kit' };
+TARGETS.send = '.rl-send';
 const STATE_CLASSES = ['is-in', 'is-on', 'is-done', 'is-hover', 'is-picked', 'is-gone', 'is-open', 'is-sent', 'is-v2', 'is-approved', 'is-pressed'];
+STATE_CLASSES.push('is-shown');   // version 2: the Download button, shown after the kit lands
 
 // fx/fy: where on the anchor the cursor tip lands (fractions of its box).
 function moveCursor(stage, who, anchorSel, show, fx = 0.58, fy = 0.6) {
@@ -204,7 +330,8 @@ export function applyCue(stage, cue) {
     case 'beat': {
       stage.dataset.beat = cue.name;
       // Earlier steps full, this one filling; on 'clear' every step is full.
-      const k = STEP_ORDER.indexOf(cue.name);
+      // Read the order off the strip itself: version 2's has three steps.
+      const k = qa('.rl-step').length === STEP_ORDER.length ? STEP_ORDER.indexOf(cue.name) : qa('.rl-step').map((s) => s.dataset.step).indexOf(cue.name);
       qa('.rl-step').forEach((s, i) => {
         s.classList.toggle('is-done', k === -1 ? cue.name === 'clear' : i < k);
         s.classList.toggle('is-on', i === k);
@@ -260,6 +387,12 @@ export function applyCue(stage, cue) {
       break;
     }
     case 'tile': q(`.rl-tile[data-t="${cue.i}"]`)?.classList.add('is-in'); break;
+    case 'reveal': q(cue.anchor)?.classList.add('is-shown'); break;
+    case 'file': qa('.rl-send [data-f]').forEach((f) => f.classList.toggle('is-hover', +f.dataset.f === cue.i)); break;
+    case 'sent': {
+      q('.rl-send')?.classList.add('is-sent');
+      break;
+    }
     case 'end': {
       stage.dataset.beat = '';
       stage.classList.remove('is-v2', 'is-playing', 'is-noted');

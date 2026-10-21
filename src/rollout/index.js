@@ -1,7 +1,7 @@
 // Mounts the Rollout into the hero: plays one project after another, pauses
 // when the stage is off-screen or the tab is hidden, skips on tap, and falls
 // back to a still for reduced-motion and to posters for save-data visitors.
-import { cuesFor, createRunner, BEATS } from './timeline.js';
+import { cuesFor, createRunner, BEATS, beatsFor } from './timeline.js';
 import { renderProject, applyCue, hydrate } from './render.js';
 
 /* Later-beat images load after the page's own load event (or at once if it
@@ -12,8 +12,11 @@ function hydrateWhenLoaded(stage) {
 }
 
 const prefetched = new Set();
-function prefetch(project, saveData) {
+function prefetch(project, saveData, version = 1) {
+  // Version 2 shows no preview, so its clip and poster are never fetched.
+  const skip = version === 2 ? [project.preview?.video, project.preview?.poster] : [];
   for (const url of project.assets || []) {
+    if (skip.includes(url)) continue;
     if (prefetched.has(url)) continue;
     if (url.endsWith('.mp4') && saveData) continue;
     prefetched.add(url);
@@ -24,8 +27,8 @@ function prefetch(project, saveData) {
 }
 
 /* Apply every cue of the round before `untilMs`, skipping the ones that need time. */
-function applyUntil(stage, project, untilMs) {
-  for (const cue of cuesFor(project)) {
+function applyUntil(stage, project, untilMs, version = 1) {
+  for (const cue of cuesFor(project, version)) {
     if (cue.at >= untilMs) break;
     if (cue.type === 'video' || cue.type === 'cursor' || cue.type === 'download') continue;
     applyCue(stage, cue);
@@ -39,17 +42,21 @@ export function mountRollout(root, {
   projects,
   reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches,
   saveData = !!(navigator.connection && navigator.connection.saveData) || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-data: reduce)').matches),
+  version = 1,   // see version.js
 } = {}) {
+  const BEATS_ = beatsFor(version);
   const n = projects?.length || 0;
   if (!root || !n) return null;
   root.dataset.projects = String(n);
+  // Version 1 was designed for a 2:1 stage (rollout.css sets 2.4:1 for version 2).
+  if (version !== 2 && typeof document !== 'undefined') { document.documentElement.style.setProperty('--rollout-ar', '2 / 1'); document.documentElement.style.setProperty('--rollout-k', '2'); }
 
   let idx = 0, stage = null, runner = null, swapping = false, inView = false, destroyed = false;
   let hidden = typeof document !== 'undefined' && document.hidden;
 
   const place = (p) => {
     if (stage) stage.remove();
-    stage = renderProject(p);
+    stage = renderProject(p, version);
     if (saveData) stage.dataset.nomp4 = '1';
     root.prepend(stage);
     root.dataset.project = p.slug;
@@ -59,16 +66,16 @@ export function mountRollout(root, {
 
   // Dev view: /?rollout=beat:<name>[&p=<index>] freezes a project at the end of that beat.
   const m = typeof location !== 'undefined' && location.search.match(/rollout=beat:(\w+)/);
-  if (m && BEATS[m[1]]) {
+  if (m && BEATS_[m[1]]) {
     const pi = Math.min(n - 1, Math.max(0, Number((location.search.match(/[?&]p=(\d+)/) || [])[1] || 0)));
     place(projects[pi]);
-    for (const cue of cuesFor(projects[pi])) { if (cue.at >= BEATS[m[1]][1]) break; if (cue.type !== 'video') applyCue(stage, cue); }
+    for (const cue of cuesFor(projects[pi], version)) { if (cue.at >= BEATS_[m[1]][1]) break; if (cue.type !== 'video') applyCue(stage, cue); }
     return { next() {}, pause() {}, resume() {}, destroy() { stage?.remove(); } };
   }
 
   // Reduced motion: the delivered frame, no cursors, a real Next button.
   if (reducedMotion) {
-    const showStill = () => { place(projects[idx]); applyUntil(stage, projects[idx], BEATS.clear[0]); };
+    const showStill = () => { place(projects[idx]); applyUntil(stage, projects[idx], BEATS_.clear[0], version); };
     const btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'rl-next'; btn.textContent = 'Next';
     btn.addEventListener('click', (e) => { e.stopPropagation(); idx = (idx + 1) % n; showStill(); });
@@ -96,10 +103,12 @@ export function mountRollout(root, {
     const p = projects[i];
     place(p);
     runner = createRunner({
-      cues: cuesFor(p),
+      cues: cuesFor(p, version),
       apply: (cue) => {
         applyCue(stage, cue);
         if (cue.type === 'beat' && cue.name === 'preview') prefetch(projects[(i + 1) % n], saveData);
+        // Version 2 has no preview beat; the next project loads during the directions.
+        if (version === 2 && cue.type === 'beat' && cue.name === 'directions') prefetch(projects[(i + 1) % n], saveData, version);
         if (cue.type === 'end' && !destroyed) setTimeout(() => { if (!destroyed && runner && runner.state() === 'done') { idx = (i + 1) % n; show(idx); } }, 0);
       },
     });

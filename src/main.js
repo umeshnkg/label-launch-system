@@ -743,11 +743,13 @@ $$('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); }
 import { ROLLOUT } from './rollout.js';
 import { safeProjects } from './rollout/derive.js';
 import { mountRollout } from './rollout/index.js';
+import { pickVersion } from './rollout/version.js';
 {
   const root = $('[data-rollout]');
   if (root) {
     // A bad entry is logged and skipped (npm test catches it before a build); with nothing left to play, the still stands in.
-    const mounted = mountRollout(root, { projects: safeProjects(ROLLOUT, { FEATURED, YT_CARDS, REELS }) });
+    // Version: src/rollout/version.js (set ROLLOUT_VERSION = 1 for the original; ?rv=1 to compare).
+    const mounted = mountRollout(root, { projects: safeProjects(ROLLOUT, { FEATURED, YT_CARDS, REELS }), version: pickVersion(location.search) });
     if (!mounted) root.innerHTML = '<img src="/kit/rollout/fallback.webp" alt="A delivered release kit: lyric video, promo clips, Spotify Canvas, thumbnails" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg)" />';
   }
 }

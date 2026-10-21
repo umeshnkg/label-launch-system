@@ -30,17 +30,40 @@ function alternateHorizons(list) {
   return list;
 }
 
-const HEADINGS = { song: 'New track', 'song+cover': 'New track + cover art', 'song+images': 'New track + images', 'song+photo': 'New track + artist photo' };
+const HEADINGS = { song: 'New track', 'song+cover': 'New track + cover art', 'song+images': 'New track + images', 'song+photo': 'New track + artist photo', 'song+clips': 'New track + video clips' };
 
 export function notificationFor(record, story) {
-  const kind = story.input === 'song+cover' ? 'cover' : (story.input === 'song+images' || story.input === 'song+photo') ? 'stack' : 'song';
+  const kind = story.input === 'song+cover' ? 'cover' : (story.input === 'song+images' || story.input === 'song+photo' || story.input === 'song+clips') ? 'stack' : 'song';
   const images = kind === 'cover' ? [record.cover].filter(Boolean) : kind === 'stack' ? (story.inputImages || []).slice(0, 2) : [];
   return {
     heading: HEADINGS[story.input] || HEADINGS.song,
     line2: `${record.artist}, ${record.title}`,
-    chips: [...(story.files || []), releaseHorizon(record.ordered, record.released)],
+    // story.releaseTag: Umesh's chosen tag for the hero (2026-10-20), over the computed one.
+    chips: [...(story.files || []), story.releaseTag || releaseHorizon(record.ordered, record.released)],
     icon: { kind, images, count: story.inputCount ?? null },
+    // Version 2: the names under the file icons (real file names) and the
+    // face-safe crop of each input image.
+    names: story.fileNames || null,
+    focus: story.inputFocus || [],
+    sendImages: story.sendImages || null,
+    wave: story.wave || null,
+    clips: story.input === 'song+clips',   // the stacked stills are video clips
   };
+}
+
+/* Version 2's kit: a project with no Spotify Canvas gets its mock Canvases
+   (story.mockCanvases), ahead of any Motion Cover, at most three phones. */
+export function tilesV2(p) {
+  let t = p.tiles || {};
+  // Reels that look alike are cut to the picked ones, badged Instagram then TikTok.
+  if (p.reelPick && t.reels?.length) {
+    t = { ...t, reels: p.reelPick.map((i) => t.reels[i]).filter(Boolean).map((r, i) => ({ ...r, badge: i % 2 ? 'tiktok' : 'instagram' })) };
+  }
+  const verticals = t.verticals || [];
+  if (verticals.some((v) => v.kind === 'canvas') || !(p.mockCanvases || []).length) return t;
+  const motion = verticals.filter((v) => v.kind === 'motion');
+  const mock = p.mockCanvases.slice(0, MAX.verticals - motion.length).map((poster) => ({ poster, badge: 'spotify', kind: 'canvas' }));
+  return { ...t, verticals: [...mock, ...motion] };
 }
 
 const MAX = { reels: 3, verticals: 3, thumbs: 3 };
@@ -83,11 +106,14 @@ export function resolveProject(entry, { FEATURED, YT_CARDS, REELS }) {
     thumb: record.thumb || `/thumbs/${record.id}.webp`,   // record.thumb: a delivered thumbnail design, for premieres YouTube has no image for yet
     notification, boards: story.boards || [], pick: story.pick, preview: story.preview, note: story.note,
     change: story.change, tiles, hasCard: unpublished || !!card,
+    mockCanvases: story.mockCanvases || [],
+    reelPick: story.reelPick || null,
   };
   const urls = [
     p.thumb, p.avatar, ...notification.icon.images, ...p.boards.map((b) => b.img), ...p.boards.map((b) => b.from).filter(Boolean),
     p.preview?.video, p.preview?.poster,
     ...tiles.reels.map((t) => t.poster), ...tiles.verticals.map((t) => t.poster), ...tiles.thumbs, tiles.banner, tiles.reel?.avatar,
+    ...p.mockCanvases, ...p.boards.map((b) => b.fromCrop).filter(Boolean), ...(notification.sendImages || []),
   ].filter(Boolean);
   p.assets = [...new Set(urls)];
   return p;

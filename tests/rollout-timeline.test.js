@@ -93,3 +93,49 @@ test('skip cancels pending cues', () => {
   assert.equal(clk.pending(), 0); assert.equal(r.state(), 'done');
   const n = seen.length; clk.advance(22500); assert.equal(seen.length, n);
 });
+
+// Version 2 (src/rollout/version.js): the send, no preview beat.
+import { BEATS_V2, ROUND_MS_V2, beatsFor } from '../src/rollout/timeline.js';
+import { ROLLOUT_VERSION, pickVersion } from '../src/rollout/version.js';
+
+test('v2: three beats plus clear, 16.5 s, no preview cues at all', () => {
+  assert.equal(ROUND_MS_V2, 16500);
+  assert.equal(beatsFor(2), BEATS_V2); assert.equal(beatsFor(1), BEATS);
+  const cues = cuesFor(project, 2);
+  assert.ok(cues.every((c, i) => i === 0 || c.at >= cues[i - 1].at));
+  assert.deepEqual(cues.filter((c) => c.type === 'beat').map((c) => [c.name, c.at]), [['notification', 0], ['directions', 5000], ['delivered', 10000], ['clear', 14500]]);
+  assert.ok(!cues.some((c) => ['video', 'tc', 'note', 'v2'].includes(c.type) || c.target === 'preview' || c.target === 'ntf'));
+  assert.equal(cues.at(-1).type, 'end'); assert.equal(cues.at(-1).at, 16500);
+  assert.equal(cues.filter((c) => c.type === 'tile').length, 1 + 3 + 2 + 1);
+});
+
+test('v2: the client looks over every file and the release tag, then presses Send inside beat 1', () => {
+  const cues = cuesFor(project, 2);
+  const looks = cues.filter((c) => c.type === 'file' && c.i >= 0).map((c) => c.i);
+  assert.deepEqual(looks, [0, 1, 2]);   // master.wav, 6 photos, release tag
+  const press = cues.find((c) => c.type === 'press' && c.anchor === '.rl-send__btn');
+  const sent = cues.find((c) => c.type === 'sent');
+  assert.ok(press && sent && press.at < sent.at && sent.at < BEATS_V2.notification[1]);
+  assert.ok(cues.filter((c) => c.type === 'cursor').every((c) => c.who === 'client'));
+  assert.ok(cues.find((c) => c.type === 'hide' && c.target === 'send').at > sent.at && cues.find((c) => c.type === 'hide' && c.target === 'send').at <= BEATS_V2.directions[0]);
+  const dl = cues.find((c) => c.type === 'reveal' && c.anchor === '.rl-kit .rl-ok'), lastTile = cues.filter((c) => c.type === 'tile').at(-1);
+  assert.ok(dl.at > lastTile.at);
+});
+
+test('v1 is untouched by default; the version switch and ?rv override', () => {
+  assert.deepEqual(cuesFor(project), cuesFor(project, 1));
+  assert.ok([1, 2].includes(ROLLOUT_VERSION));
+  assert.equal(pickVersion('?rv=1'), 1); assert.equal(pickVersion('?a=b&rv=2'), 2);
+  assert.equal(pickVersion('?rv=9'), ROLLOUT_VERSION); assert.equal(pickVersion(''), ROLLOUT_VERSION);
+});
+
+test('v2: every button is revealed after its stage graphics and before the cursor reaches it', () => {
+  const cues = cuesFor({ ...project, pick: undefined }, 2);
+  for (const sel of ['.rl-send__btn', '.rl-boards .rl-ok', '.rl-kit .rl-ok']) {
+    const shown = cues.find((c) => c.type === 'reveal' && c.anchor === sel);
+    const reached = cues.find((c) => c.type === 'cursor' && c.anchor === sel && c.show);
+    assert.ok(shown && reached && shown.at < reached.at, sel);
+  }
+  const lastLook = cues.filter((c) => c.type === 'file' && c.i >= 0).at(-1);
+  assert.ok(cues.find((c) => c.type === 'reveal' && c.anchor === '.rl-send__btn').at > lastLook.at);
+});
