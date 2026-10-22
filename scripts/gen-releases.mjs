@@ -41,7 +41,7 @@ const FOOTER = `
           <ul>
             <li><a href="https://ughdstudios.com">UGHD Studios</a></li>
             <li><a href="https://www.lyricvideo.tv">LyricVideo.tv</a></li>
-            <li><a href="https://www.makelyricvideo.com">Make Lyric Video</a></li>
+            <li><a href="https://makelyricvideo.com">Make Lyric Video</a></li>
           </ul>
         </div>
         <div>
