@@ -25,6 +25,7 @@ Build history, teardown, proof inventory and earlier decisions: `E:\Obsidian Vau
 - Never commit `.dev.vars`. Push only when Umesh asks (every push to `main` deploys to Cloudflare Pages).
 
 ## Commands
+- Deploys: Cloudflare Pages builds `main` from GitHub, usually within a minute. If a push doesn't show up: `npx wrangler pages deployment list --project-name label-launch-system` (a Failure row on `initialize` = Cloudflare's builder timed out, not our code; on 2026-10-21 cdc5072 failed that way after an 11-minute queue). Retry with an empty commit, or deploy by hand: `npm run build` then `npx wrangler pages deploy dist --project-name label-launch-system --branch main --commit-hash <sha>` from the repo root (it uploads `functions/` too).
 - `node scripts/og.mjs` (share cards + icons) · `npm run gen` (case pages) · `npm run dev` (port 5180) · `npm run build` · `npm run preview` (port 4180) · `npm run dev:full` (wrangler + Function) · `node scripts/shoot.mjs <dir>` (screenshots) · `npm test` (node --test) · `npm run shoot:rollout` (hero beats, behaviour and phone fold in a real browser; `ROLLOUT_P=<index>` for another project; modes `fallback` and `lcp`) · `npm run rollout:budget` · `node scripts/rollout-assets.mjs preview|poster|image ...` · `python -I scripts/rollout-boards.py --pdf ... | --tiles ...`
 
 ## Structure
